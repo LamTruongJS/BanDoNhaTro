@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor"
+      crossorigin="anonymous"
+    />
+    <title>Thêm Nhà Trọ</title>
+    <link rel="icon" type="image/x-icon" href="/images/logoMap.png" />
+    <script
+      type="text/javascript"
+      src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"
+    ></script>
+  </head>
+  <%- include('./style'); %>
+  <body class="h-100 w-100">
+    <%- include('../MenuOwner/MenuOwner.ejs'); %>
+    <div class="snake__bar">
+      <div class="snake__value"></div>
+    </div>
+    <nav
+      class="w-100 container-form-step_one"
+      id="step_one"
+      style="display: flex; justify-content: center"
+    >
+      <div
+        class="w-75 border border-1 mt-2"
+        style="background: #fff; box-shadow: 2px 2px 7px #ddd"
+      >
+        <span class="title w-100">Nhập thông tin nhà trọ</span>
+        <form class="p-4 pb-2" id="form_motel">
+          <div class="mb-1">
+            <label class="form-label">Tên nhà trọ</label>
+            <input
+              type="text"
+              class="form-control shadow-none form-control-sm"
+              id="motel_name"
+              name="motel_name"
+            />
+          </div>
+
+          <div class="mb-1">
+            <label class="form-label">Địa chỉ</label>
+            <input
+              type="text"
+              class="form-control shadow-none form-control-sm"
+              id="address_basic"
+              name="address_basic"
+            />
+          </div>
+
+          <div class="row mb-1">
+            <div class="col-md-5">
+              <label class="form-label">Lat</label>
+              <input
+                type="text"
+                class="form-control shadow-none form-control-sm"
+                id="lat"
+                name="lat"
+              />
+            </div>
+            <div class="col-md-2">
+              <label class="form-label"></label>
+              <button
+                id="myBtn"
+                type="button"
+                class="btn btn-outline-dark hidden form-control form-control-sm"
+              >
+                Xem map
+              </button>
+              <!-- Modal Cho Website -->
+              <div id="myModal" class="modal">
+                <div class="modal-content">
+                  <div id="map"></div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-5">
+              <label class="form-label">Lng</label>
+              <input
+                type="text"
+                class="form-control shadow-none form-control-sm"
+                id="lng"
+                name="lng"
+              />
+            </div>
+          </div>
+          <div class="row mb-1">
+            <div class="col-md-5">
+              <label class="form-label">Giá tiền</label>
+              <input
+                type="text"
+                class="form-control shadow-none form-control-sm"
+                id="price__basic"
+                name="price__basic"
+              />
+            </div>
+            <div class="col-md-5 offset-md-2">
+              <label class="form-label">Số điện thoại</label>
+              <input
+                type="text"
+                class="form-control shadow-none form-control-sm"
+                id="phone_number"
+                name="phone_number"
+              />
+            </div>
+          </div>
+          <div class="row mb-1">
+            <div class="col-md-5">
+              <label class="form-label">Hình thức thanh toán</label>
+              <select
+                class="form-select shadow-none form-select-sm"
+                aria-label=".form-select-sm example"
+                id="list_payment"
+                name="type_payment_id"
+              >
+                <option value="" checked>------</option>
+              </select>
+            </div>
+            <div class="col-md-5 offset-md-2">
+              <label class="form-label">Loại nhà trọ</label>
+              <select
+                class="form-select shadow-none form-select-sm"
+                aria-label=".form-select-sm example"
+                id="list_motel"
+                name="type_motel_id"
+              >
+                <option value="" checked>------</option>
+              </select>
+            </div>
+          </div>
+          <div class="row mb-1">
+            <div class="col-md-3">
+              <label class="form-label">Tỉnh</label>
+              <select
+                class="form-select shadow-none form-select-sm"
+                aria-label=".form-select-sm example"
+                id="list_province"
+                name="province_id"
+              >
+                <option value="" checked>------</option>
+              </select>
+            </div>
+            <div class="col-md-3 offset-md-1" id="container_city">
+              <label class="form-label">Thành Phố</label>
+              <select
+                class="form-select shadow-none form-select-sm"
+                aria-label=".form-select-sm example"
+                id="list_city"
+                name="city_id"
+              >
+                <option value="">------</option>
+              </select>
+            </div>
+            <div class="col-md-3 offset-md-1" id="container_ward">
+              <label class="form-label">Thị xã</label>
+              <select
+                class="form-select shadow-none form-select-sm"
+                aria-label=".form-select-sm example"
+                id="list_ward"
+                name="ward_id"
+              >
+                <option value="">------</option>
+              </select>
+            </div>
+            <label class="form-label mt-2">Hashtag</label>
+            <div class="form-floating">
+              <textarea
+                class="form-control shadow-none p-2"
+                placeholder="Leave a comment here"
+                id="hashtag"
+                name="hashtag"
+                style="height: 100px"
+              ></textarea>
+            </div>
+            <label class="form-label mt-2">Mô tả nhà trọ</label>
+            <div class="form-floating">
+              <textarea
+                class="form-control shadow-none p-2"
+                placeholder="Leave a comment here"
+                id="description"
+                name="description"
+                style="height: 100px"
+              ></textarea>
+            </div>
+          </div>
+          <div class="d-flex justify-content-around mt-4">
+            <button
+              type="reset"
+              class="btn btn-outline-danger"
+              id="btn_reset_motel"
+            >
+              Xóa bỏ
+            </button>
+            <button
+              type="button"
+              class="btn btn-outline-success"
+              id="btn_submit_motel"
+            >
+              Hoàn tất
+            </button>
+          </div>
+        </form>
+      </div>
+    </nav>
+    <nav
+      class="m-2 container-form-step_two"
+      style="display: flex; justify-content: center"
+      id="step_two"
+    >
+      <div
+        class="border border-1 w-75"
+        style="background: #fff; box-shadow: 2px 2px 7px #ddd"
+      >
+        <p
+          class="bg-black text-white text-center text-white text-uppercase p-2 title"
+        >
+          Nhập thông tin phòng trọ
+        </p>
+
+        <form class="p-4 overflow-y-auto" id="form_room">
+          <div class="mb-1 row">
+            <div class="col-5">
+              <label class="form-label">Tên phòng trọ</label>
+              <input
+                type="text"
+                class="form-control shadow-none form-control-sm"
+                id="room_name"
+                name="room_name"
+              />
+            </div>
+            <div class="col-5 offset-2">
+              <label for="exampleInputEmail1" class="form-label"
+                >Loại phòng trọ</label
+              >
+              <select
+                class="form-select shadow-none form-select-sm"
+                aria-label=".form-select-sm example"
+                name="type_room_id"
+                id="listTypeRoom"
+              >
+                <option value="">------</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row mb-1">
+            <div class="col-md-5">
+              <label class="form-label">Diện tích</label>
+              <input
+                type="text"
+                class="form-control shadow-none form-control-sm"
+                id="area"
+                name="area"
+              />
+            </div>
+            <div class="col-md-5 offset-md-2">
+              <label class="form-label">Số người ở tối đa</label>
+              <input
+                type="text"
+                class="form-control shadow-none form-control-sm"
+                id="max_people"
+                name="max_people"
+              />
+            </div>
+          </div>
+          <div class="row mb-1">
+            <div class="col-md-5">
+              <label class="form-label">Giá tiền</label>
+              <input
+                type="text"
+                class="form-control shadow-none form-control-sm"
+                id="room_price"
+                name="room_price"
+              />
+            </div>
+            <div class="col-md-5 offset-md-2">
+              <label class="form-label">Vị trí tầng</label>
+              <input
+                type="text"
+                class="form-control shadow-none form-control-sm"
+                id="floor"
+                name="floor"
+              />
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-5">
+              <label class="form-label mt-2">Dịch vụ</label>
+              <div class="form-floating">
+                <textarea
+                  class="form-control shadow-none p-2"
+                  placeholder="Leave a comment here"
+                  id="service"
+                  name="service"
+                  style="height: 100px"
+                ></textarea>
+              </div>
+            </div>
+            <div class="col-5 offset-2">
+              <label class="form-label mt-2">Nội thất</label>
+              <div class="form-floating">
+                <textarea
+                  class="form-control shadow-none p-2"
+                  placeholder="Leave a comment here"
+                  id="furniture"
+                  name="furniture"
+                  style="height: 100px"
+                ></textarea>
+              </div>
+            </div>
+          </div>
+          <label class="form-label mt-2">Mô tả nhà trọ</label>
+          <div class="form-floating">
+            <textarea
+              class="form-control shadow-none p-2"
+              placeholder="Leave a comment here"
+              id="description"
+              name="description"
+              style="height: 100px"
+            ></textarea>
+          </div>
+          <div class="d-flex justify-content-around mt-2 mb-3">
+            <button
+              type="reset"
+              class="btn btn-outline-danger"
+              id="btn_reset_room"
+            >
+              Xóa bỏ
+            </button>
+            <button
+              type="button"
+              class="btn btn-outline-success"
+              id="btn_submit_room"
+            >
+              Hoàn tất
+            </button>
+          </div>
+        </form>
+      </div>
+    </nav>
+    <nav
+      class="h-100"
+      id="step_three"
+      style="display: flex; justify-content: center; align-items: center"
+    >
+      <div
+        class="w-75 h-100"
+        style="
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          flex-direction: column;
+        "
+      >
+        <div
+          class="container mt-5 none"
+          id="containerLoading"
+          style="min-height: 200px"
+        >
+          <div class="d-flex justify-content-center w-100">
+            <div class="card text-center mb-5" style="min-height: 200px">
+              <div id="loading" style="min-height: 200px">
+                <div class="lds-roller">
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                </div>
+                <div id="text-loading">Đang xử lí</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="result">
+          <div class="container d-flex justify-content-center mt-5">
+            <div class="card text-center mb-5">
+              <div class="circle-image">
+                <img src="/images/check.png" width="50" />
+              </div>
+
+              <span class="help-text mb-1 fw-500">Thành Công</span>
+              <small class="text-black-50"
+                >Để tiếp tục thêm phòng trọ hãy nhấn vào nút tiếp tục, hoặc
+                thoát để quay lại màn hình chính</small
+              >
+
+              <div class="buttons mb-3 mt-4 px-5 d-flex justify-content-around">
+                <button id="btnContinue" class="btn btn-outline-dark btn-block">
+                  Tiếp Tục
+                </button>
+
+                <button id="btnOut" class="btn btn-outline-dark btn-block">
+                  Thoát
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+    <%- include('./javas'); %>
+    <script
+      defer
+      src="https://api.map4d.vn/sdk/map/js?version=2.1&key=82388984ac71fb9b9d05509e99a42fad&callback=initMap"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js"
+      integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.min.js"
+      integrity="sha384-kjU+l4N0Yf4ZOJErLsIcvOU2qSb74wXpOhqTvwVx3OElZRweTnQ6d31fXEoRD1Jy"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>

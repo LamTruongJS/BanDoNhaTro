@@ -1,0 +1,126 @@
+<script>
+  const TOKEN = sessionStorage.getItem("TOKEN");
+  if (!TOKEN) {
+    location.href = "/login";
+  }
+  const role = JSON.parse(sessionStorage.getItem("role"));
+  if (role != "customer") {
+    location.href = "/not-found";
+  }
+  const containerListRoom = document.getElementById("listRoom");
+  const user_id = JSON.parse(sessionStorage.getItem("user_id"));
+  const setSnakeBar = (value, type) => {
+    snakeBar.classList.add(`showSnake__bar__${type}`);
+    snakeBar.querySelector(".snake__value").innerHTML = value;
+    setTimeout(() => {
+      snakeBar.classList.remove(`showSnake__bar__${type}`);
+    }, 1000);
+  };
+  const getDetailRoom = (item, i) => {
+    let options = {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + JSON.parse(sessionStorage.getItem("TOKEN")),
+        "Content-Type": "application/json",
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    };
+    fetch(`http://localhost:8888/room/${item.room_id}`, options)
+      .then((response) => response.json())
+      .then((data) => {
+        const room_name = data.result.room_name;
+        const motel_name = data.result.motel_name;
+        const address = data.result.address;
+        const price = new Intl.NumberFormat("vi-VN", {
+          style: "currency",
+          currency: "VND",
+        }).format(item.price);
+        const timeStart = new Date(item.date_start);
+        const timeStartCurrent = `${timeStart.getFullYear()}-${(
+          timeStart.getMonth() + 1
+        )
+          .toString()
+          .padStart(2, 0)}-${timeStart.getDate().toString().padStart(2, 0)}`;
+        const timeEnd = new Date(item.date_end);
+        const timeEndCurrent = `${timeEnd.getFullYear()}-${(
+          timeEnd.getMonth() + 1
+        )
+          .toString()
+          .padStart(2, 0)}-${timeEnd.getDate().toString().padStart(2, 0)}`;
+        const timePayment = new Date(item.time_payment);
+        const timePaymentCurrent = `${timePayment.getFullYear()}-${(
+          timePayment.getMonth() + 1
+        )
+          .toString()
+          .padStart(2, 0)}-${timePayment.getDate().toString().padStart(2, 0)}`;
+        if (i === 0) {
+          containerListRoom.innerHTML = `<div class="list__room__item">
+                                            <a href="http://localhost:3000/motel/MT001/room/${item.room_id}">
+                                            <div class="list__room__item__info">
+                                              <h3 class="list__room__item__info__title">
+                                                ${room_name} - ${motel_name}
+                                              </h3>
+                                              <div class="list__room__item__info__config">
+                                                <span class="config__price">Thời gian bắt đâu: ${timeStartCurrent}</span>
+                                                <span class="config__dot">·</span>
+                                                <span class="config__area">Thời gian kết thúc: ${timeEndCurrent}</span>
+                                                <span class="config__dot">·</span>
+                                                <span class="config__area"></span>
+                                              </div>
+                                              <span class="list__room__item__info__desc"
+                                                >Thời gian thanh toán: ${timePaymentCurrent} · Giá tiền thanh toán: ${price}</span
+                                              >
+                                              <span class="list__room__item__info__location">Địa chỉ: ${address}</span>
+                                            </div>
+                                          </a>
+                                        </div>`;
+        } else {
+          containerListRoom.innerHTML += `<div class="list__room__item">
+                                                <a href="http://localhost:3000/motel/MT001/room/${item.room_id}">
+                                                <div class="list__room__item__info">
+                                                  <h3 class="list__room__item__info__title">
+                                                    ${room_name} - ${motel_name}
+                                                  </h3>
+                                                  <div class="list__room__item__info__config">
+                                                    <span class="config__price">Thời gian bắt đâu: ${timeStartCurrent}</span>
+                                                    <span class="config__dot">·</span>
+                                                    <span class="config__area">Thời gian kết thúc: ${timeEndCurrent}</span>
+                                                    <span class="config__dot">·</span>
+                                                    <span class="config__area"></span>
+                                                  </div>
+                                                  <span class="list__room__item__info__desc"
+                                                    >Thời gian thanh toán: ${timePaymentCurrent} · Giá tiền thanh toán: ${price}</span
+                                                  >
+                                                  <span class="list__room__item__info__location">Địa chỉ: ${address}</span>
+                                                </div>
+                                              </a>
+                                            </div>`;
+        }
+      })
+      .catch((error) => console.log(error));
+  };
+
+  const getListRoom = () => {
+    let options = {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + JSON.parse(sessionStorage.getItem("TOKEN")),
+        "Content-Type": "application/json",
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    };
+
+    fetch(`http://localhost:8888/rent/${user_id}`, options)
+      .then((response) => response.json())
+      .then((data) => {
+        for (let i = 0; i < data.result.length; i++) {
+          const item = data.result[i];
+          getDetailRoom(item, i);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  getListRoom();
+</script>

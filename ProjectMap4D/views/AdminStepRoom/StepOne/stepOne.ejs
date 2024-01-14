@@ -1,0 +1,36 @@
+<%- include('./style'); %>
+<nav
+  class="w-75 border border-1 container-form-step_one"
+  id="step_one"
+  style="background: #fff; box-shadow: 2px 2px 7px #ddd"
+>
+  <span class="title">Xác nhận nhà trọ</span>
+  <form class="p-4 pb-2" id="form__step__one">
+    <div class="mb-1">
+      <label class="form-label">Nhà trọ bạn chọn</label>
+      <select
+        class="form-select shadow-none"
+        aria-label="Default select example"
+        name="motel_id"
+        id="motel_id"
+      >
+        <option value="" checked>------</option>
+      </select>
+    </div>
+    <div class="d-flex justify-content-around mt-4">
+      <button type="reset" class="btn btn-outline-danger" id="btn_reset">
+        Quay lại
+      </button>
+      <button type="button" class="btn btn-outline-success" id="btn_submit">
+        Hoàn tất
+      </button>
+    </div>
+  </form>
+</nav>
+<link
+  href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css"
+  rel="stylesheet"
+  integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor"
+  crossorigin="anonymous"
+/>
+<%- include('./javas'); %>

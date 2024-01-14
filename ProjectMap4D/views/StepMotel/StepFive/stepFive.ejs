@@ -1,0 +1,50 @@
+<%- include('./style'); %>
+
+<nav
+  class="w-100 container-form-step_five h-100"
+  id="step_five"
+  style="
+    background: #fff;
+    box-shadow: 2px 2px 7px #ddd;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    min-height: 50vh;
+  "
+>
+  <div class="lds-roller" id="loading">
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+  </div>
+  <div id="text-loading">Đang xử lí</div>
+  <div class="alert alert-danger none" role="alert" id="result_test"></div>
+  <div class="w-100 none" id="result_success" style="height: 60vh">
+    <div class="d-flex justify-content-center align-items-center w-100 h-100">
+      <div
+        class="alert alert-success d-flex flex-column justify-content-center align-items-center w-50 h-50"
+        role="alert"
+      >
+        <img
+          src="/images/check.png"
+          alt="check"
+          style="width: 40px; height: 40px; margin-bottom: 10px"
+        />
+        <span>Kiểm tra thành công, không phát hiện lỗi</span>
+      </div>
+    </div>
+  </div>
+</nav>
+<link
+  href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css"
+  rel="stylesheet"
+  integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor"
+  crossorigin="anonymous"
+/>
+<%- include('./javas'); %>

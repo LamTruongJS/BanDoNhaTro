@@ -1,0 +1,311 @@
+<script>
+  const form = document.getElementById("form");
+  form.classList.add("none");
+  document.getElementById("containerLisRoom").classList.add("none");
+  let formValue = {
+    motel_id: "",
+    room_id: "",
+    room_name: "",
+    area: "",
+    max_people: "",
+    room_price: "",
+    description: "",
+    furniture: "",
+    service: "",
+    type_room_id: "",
+    floor: "",
+  };
+  const getListMotel = () => {
+    const user_id = JSON.parse(sessionStorage.getItem("user_id"));
+    let conditions = {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + JSON.parse(sessionStorage.getItem("TOKEN")),
+        "Content-Type": "application/json",
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    };
+
+    fetch(`http://localhost:8888/motel/list/${user_id}`, conditions)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        const listRoom = data.result;
+        const listOption = document.getElementById("listMotel");
+        listRoom.map((item, index) => {
+          listOption.innerHTML += `<option value="${item.motel_id}">${item.motel_name}</option>`;
+        });
+      })
+      .catch((error) => console.log(error));
+  };
+  getListMotel();
+  const listMotel = document.getElementById("listMotel");
+  const listRoom = document.getElementById("listRoom");
+  listMotel.addEventListener("change", (e) => {
+    const value = e.target.value;
+    const name = e.target.name;
+    formValue = { ...formValue, [name]: value, room_id: "" };
+    if (value === "") {
+      form.classList.add("none");
+      document.getElementById("containerLisRoom").classList.add("none");
+    } else {
+      // getDetailMotel();
+      getListRoom(value);
+    }
+  });
+  listRoom.addEventListener("change", (e) => {
+    const value = e.target.value;
+    const name = e.target.name;
+    formValue = { ...formValue, [name]: value };
+    if (value === "") {
+      form.classList.add("none");
+    } else {
+      form.classList.remove("none");
+      getDetailRoom();
+    }
+  });
+  const textInputList = form.querySelectorAll("input[type='text']");
+  textInputList.forEach((item) =>
+    item.addEventListener("change", (e) => {
+      const name = e.target.name;
+      const value = e.target.value;
+      formValue = { ...formValue, [name]: value };
+    })
+  );
+  form.querySelectorAll("textarea").forEach((item) => {
+    item.addEventListener("change", (e) => {
+      const name = e.target.name;
+      const value = e.target.value;
+      formValue = { ...formValue, [name]: value };
+    });
+  });
+  document.getElementById("listTypeRoom").addEventListener("change", (e) => {
+    const name = e.target.name;
+    const value = e.target.value;
+    formValue = { ...formValue, [name]: value };
+  });
+  const snakeBar = document.querySelector(".snake__bar");
+
+  const setSnakeBar = (value, type) => {
+    snakeBar.classList.add(`showSnake__bar__${type}`);
+    snakeBar.querySelector(".snake__value").innerHTML = value;
+    setTimeout(() => {
+      snakeBar.classList.remove(`showSnake__bar__${type}`);
+    }, 1000);
+  };
+
+  const btn_reset = document.getElementById("btn_reset");
+  const btn_submit = document.getElementById("btn_submit");
+  btn_reset.addEventListener("click", () => {
+    formValue = {
+      motel_id: "",
+      room_id: "",
+      room_name: "",
+      area: "",
+      max_people: "",
+      room_price: "",
+      description: "",
+      furniture: "",
+      service: "",
+      type_room_id: "",
+      floor: "",
+    };
+  });
+
+  function getDetailMotel() {
+    let conditions = {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + JSON.parse(sessionStorage.getItem("TOKEN")),
+        "Content-Type": "application/json",
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    };
+
+    fetch(
+      `http://localhost:8888/owner/motel/detail-by-id?motel_id=${motel_id}`,
+      conditions
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        const motel = data.result[0];
+        console.log(motel);
+        formValue = {
+          motel_name: motel.motel_name,
+          address_basic: motel.address_basic,
+          lat: motel.lat,
+          lng: motel.lng,
+          price__basic: motel.price__basic,
+          phone_number: motel.phone_number,
+          hashtag: motel.hashtag,
+          province_id: motel.province_id,
+          city_id: motel.city_id,
+          ward_id: motel.ward_id,
+          type_payment_id: motel.type_payment_id,
+          type_motel_id: motel.type_motel_id,
+          description: motel.description,
+        };
+        document.getElementById("motel_name").value = motel.motel_name;
+        document.getElementById("address_basic").value = motel.address_basic;
+        document.getElementById("lat").value = motel.lat;
+        document.getElementById("lng").value = motel.lng;
+        document.getElementById("price__basic").value = motel.price__basic;
+        document.getElementById("phone_number").value = motel.phone_number;
+        getTypeMotel(motel.type_motel_id);
+        getPayment(motel.type_payment_id);
+        document.getElementById("hashtag").innerHTML = motel.hashtag;
+        document.getElementById("description").innerHTML = motel.description;
+        document.getElementById("list_province").value = motel.province_id;
+        getCityByProvince(motel.province_id);
+        getWardByCity(motel.city_id);
+        setTimeout(() => {
+          document.getElementById("list_city").value = motel.city_id;
+          document.getElementById("list_ward").value = motel.ward_id;
+        }, 300);
+      })
+      .catch((error) => console.log(error));
+  }
+
+  function getListRoom(motel_id) {
+    document.getElementById("containerLisRoom").classList.remove("none");
+    let conditions = {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + JSON.parse(sessionStorage.getItem("TOKEN")),
+        "Content-Type": "application/json",
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    };
+
+    fetch(`http://localhost:8888/room/list?motel_id=${motel_id}`, conditions)
+      .then((response) => response.json())
+      .then((data) => {
+        const listRoom = data.result;
+        const listOption = document.getElementById("listRoom");
+        listOption.innerHTML = ` <option value="" checked>------</option>`;
+        listRoom.map((item, index) => {
+          listOption.innerHTML += `<option value="${item.room_id}">${item.room_name}</option>`;
+        });
+      })
+      .catch((error) => console.log(error));
+  }
+
+  const getListTypeRoom = () => {
+    const user_id = JSON.parse(sessionStorage.getItem("user_id"));
+    let conditions = {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + JSON.parse(sessionStorage.getItem("TOKEN")),
+        "Content-Type": "application/json",
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    };
+
+    fetch(`http://localhost:8888/room/list/type`, conditions)
+      .then((response) => response.json())
+      .then((data) => {
+        const listRoom = data.result;
+        const listOption = document.getElementById("listTypeRoom");
+        listRoom.map((item, index) => {
+          listOption.innerHTML += `<option value="${item.type_room_id}">${item.type_room_name}</option>`;
+        });
+      })
+      .catch((error) => console.log(error));
+  };
+  getListTypeRoom();
+  function getDetailRoom() {
+    const user_id = JSON.parse(sessionStorage.getItem("user_id"));
+    let conditions = {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + JSON.parse(sessionStorage.getItem("TOKEN")),
+        "Content-Type": "application/json",
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    };
+
+    fetch(`http://localhost:8888/room/${formValue.room_id}`, conditions)
+      .then((response) => response.json())
+      .then((data) => {
+        const room = data.result;
+        console.log(room);
+        formValue = {
+          motel_id: room.motel_id,
+          room_id: room.room_id,
+          room_name: room.room_name,
+          area: room.area,
+          max_people: room.max_people,
+          room_price: room.room_price,
+          description: room.description,
+          furniture: room.furniture,
+          service: room.service,
+          type_room_id: room.type_room_id,
+          floor: room.floor,
+        };
+        document.getElementById("room_name").value = room.room_name;
+        document.getElementById("listTypeRoom").value = room.type_room_id;
+        document.getElementById("area").value = room.area;
+        document.getElementById("max_people").value = room.max_people;
+        document.getElementById("room_price").value = room.room_price;
+        document.getElementById("floor").value = room.floor;
+        document.getElementById("service").innerHTML = room.service;
+        document.getElementById("furniture").innerHTML = room.furniture;
+        document.getElementById("description").innerHTML = room.description;
+      })
+      .catch((error) => console.log(error));
+  }
+  btn_submit.addEventListener("click", () => {
+    let isComplete = true;
+    const arrayEmpty = Object.values(formValue).filter((item) => {
+      if (item !== null && item !== undefined) {
+        return item.toString().trim() === "";
+      } else if (item === null || item === undefined) {
+        return item === null || item === undefined;
+      }
+    });
+
+    if (arrayEmpty.length > 0) {
+      isComplete = false;
+      setSnakeBar("Giá trị không được bỏ trống", "error");
+    }
+
+    if (
+      !Number(formValue.area) &&
+      !Number(formValue.max_people) &&
+      !Number(formValue.room_price) &&
+      !Number(formValue.floor)
+    ) {
+      isComplete = false;
+      setSnakeBar("Giá trị chưa hợp lệ", "error");
+    }
+    if (isComplete) {
+      ///////
+
+      console.log(formValue);
+      updateRoom(formValue);
+    }
+  });
+  function updateRoom(data) {
+    let conditions = {
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + JSON.parse(sessionStorage.getItem("TOKEN")),
+        "Content-Type": "application/json",
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: JSON.stringify(data),
+    };
+
+    fetch(`http://localhost:8888/owner/room/update`, conditions)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.result !== null) {
+          setSnakeBar("Cập nhật thông tin thành công", "success");
+          setTimeout(() => {
+            location.href = "http://localhost:3000/owner/list-motel";
+          }, 1000);
+        }
+      })
+      .catch((error) => console.log(error));
+  }
+</script>

@@ -1,0 +1,84 @@
+<script>
+  const containerListRoom = document.getElementById("listRoom");
+
+  const snakeBar = document.querySelector(".snake__bar");
+
+  const setSnakeBar = (value, type) => {
+    snakeBar.classList.add(`showSnake__bar__${type}`);
+    snakeBar.querySelector(".snake__value").innerHTML = value;
+    setTimeout(() => {
+      snakeBar.classList.remove(`showSnake__bar__${type}`);
+    }, 1000);
+  };
+  const getListRoom = () => {
+    const user_id = JSON.parse(sessionStorage.getItem("user_id"));
+    let options = {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + JSON.parse(sessionStorage.getItem("TOKEN")),
+        "Content-Type": "application/json",
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    };
+
+    fetch(`http://localhost:8888/motel/list/${user_id}`, options)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data.result);
+        for (let i = 0; i < data.result.length; i++) {
+          const item = data.result[i];
+          const price = new Intl.NumberFormat("vi-VN", {
+            style: "currency",
+            currency: "VND",
+          }).format(item.price__basic);
+          if (i === 0) {
+            containerListRoom.innerHTML = `  <div class="list__room__item">
+                                                <a href="http://localhost:3000/owner/motel/${item.motel_id}">
+                                                    <div class="list__room__item__img">
+                                                    <img src="https://maps.gstatic.com/tactile/pane/default_geocode-1x.png" />
+                                                    </div>
+                                                    <div class="list__room__item__info">
+                                                    <h3 class="list__room__item__info__title">${item.motel_name}</h3>
+                                                    <div class="list__room__item__info__config">
+                                                        <span class="config__price">Giá cơ bản: ${price}/tháng</span>
+                                                       
+                                                    </div>
+                                                    <span class="list__room__item__info__location"
+                                                        >Địa chỉ: ${item.address_basic}</span
+                                                    >
+                                                    <span class="list__room__item__info__desc"
+                                                        >Mô tả: ${item.description}</span
+                                                    >
+                                                    </div>
+                                                </a>
+                                                </div>`;
+          } else {
+            containerListRoom.innerHTML += ` <div class="list__room__item">
+                                                <a href="http://localhost:3000/owner/motel/${item.motel_id}">
+                                                    <div class="list__room__item__img">
+                                                    <img src="https://maps.gstatic.com/tactile/pane/default_geocode-1x.png" />
+                                                    </div>
+                                                    <div class="list__room__item__info">
+                                                    <h3 class="list__room__item__info__title">${item.motel_name}</h3>
+                                                    <div class="list__room__item__info__config">
+                                                        <span class="config__price">Giá cơ bản: ${price}/tháng</span>
+                                                       
+                                                    </div>
+                                                    <span class="list__room__item__info__location"
+                                                        >Địa chỉ: ${item.address_basic}</span
+                                                    >
+                                                    <span class="list__room__item__info__desc"
+                                                        >Mô tả: ${item.description}</span
+                                                    >
+                                                    </div>
+                                                </a>
+                                                </div>`;
+          }
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  getListRoom();
+</script>

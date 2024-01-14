@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor"
+      crossorigin="anonymous"
+    />
+    <title>Xóa Nhà Trọ</title>
+    <link rel="icon" type="image/x-icon" href="/images/logoMap.png" />
+    <script
+      type="text/javascript"
+      src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"
+    ></script>
+  </head>
+  <%- include('./style'); %>
+  <body class="h-100 w-100">
+    <%- include('../MenuOwner/MenuOwner.ejs'); %>
+    <div class="snake__bar">
+      <div class="snake__value"></div>
+    </div>
+    <div
+      class="m-2 container-form"
+      style="display: flex; justify-content: center"
+    >
+      <div
+        class="w-75 border border-1"
+        style="background: #fff; box-shadow: 2px 2px 7px #ddd"
+      >
+        <p
+          class="text-center text-white text-uppercase p-2"
+          style="background-color: rgb(75, 77, 80)"
+        >
+         Xóa nhà trọ
+        </p>
+        <div class="p-2">
+            <table class="table">
+                <thead>
+                  <tr class="text-center">
+                    <th scope="col">Tên Nhà Trọ</th>
+                    <th scope="col">Địa chỉ</th>
+                    <th scope="col">Yêu cầu</th>
+                    <th scope="col">Chức năng</th>
+                  </tr>
+                </thead>
+                <tbody class="body_table">
+                 
+                </tbody>
+              </table>
+      </div>
+    </div>
+    <script
+      defer
+      src="https://api.map4d.vn/sdk/map/js?version=2.1&key=82388984ac71fb9b9d05509e99a42fad&callback=initMap"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js"
+      integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.min.js"
+      integrity="sha384-kjU+l4N0Yf4ZOJErLsIcvOU2qSb74wXpOhqTvwVx3OElZRweTnQ6d31fXEoRD1Jy"
+      crossorigin="anonymous"
+    ></script>
+    <%- include('./javas'); %>
+  </body>
+</html>

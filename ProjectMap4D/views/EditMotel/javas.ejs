@@ -1,0 +1,479 @@
+<script>
+  const access_key = "82388984ac71fb9b9d05509e99a42fad";
+  const form = document.getElementById("form");
+  form.classList.add("none");
+  let motel_id = "";
+  let formValue = {
+    motel_name: "",
+    address_basic: "",
+    lat: "",
+    lng: "",
+    price__basic: "",
+    phone_number: "",
+    hashtag: "",
+    province_id: "",
+    city_id: "",
+    ward_id: "",
+    type_payment_id: "",
+    type_motel_id: "",
+    description: "",
+  };
+  const btnMap = document.getElementById("myBtn");
+  function initMap() {
+    let options = {
+      center: { lat: 16.072163491469226, lng: 108.22690536081757 },
+      zoom: 15,
+      controls: true,
+    };
+    const listMaker = [];
+    btnMap.addEventListener("click", () => {
+      document.querySelector(".modal-content").innerHTML = "";
+      const lat = document.getElementById("lat").value;
+      const lng = document.getElementById("lng").value;
+      document.querySelector(
+        ".modal-content"
+      ).innerHTML = `<div id="map"></div>`;
+      let newOption = {
+        center: { lat: lat, lng: lng },
+        zoom: 15,
+        controls: true,
+      };
+      let map = new map4d.Map(document.getElementById("map"), newOption);
+      let marker = new map4d.Marker({
+        position: { lat: lat, lng: lng },
+      });
+      marker.setMap(map);
+      listMaker.push(marker);
+      map.addListener("click", function (args) {
+        let marker = new map4d.Marker({
+          position: args.location,
+        });
+        if (listMaker.length > 0) {
+          for (let i = 0; i < listMaker.length; i++) {
+            listMaker[i].setMap(null);
+            listMaker.shift(listMaker[i]);
+          }
+        }
+        marker.setMap(map);
+        const position = marker.properties._position;
+        document.getElementById("lat").value = position.lat;
+        document.getElementById("lng").value = position.lng;
+        listMaker.push(marker);
+        formValue = {
+          ...formValue,
+          lat: position.lat,
+          lng: position.lng,
+        };
+      });
+    });
+    ModalMap();
+  }
+  function ModalMap() {
+    /* lấy phần tử modal */
+    let modal = document.getElementById("myModal");
+    /* thiết lập nút mở modal */
+    let btn = document.getElementById("myBtn");
+    btn.onclick = function () {
+      modal.style.display = "block";
+    };
+    /*Sẽ đóng modal khi nhấp ra ngoài màn hình*/
+    window.onclick = function (event) {
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    };
+  }
+  const getListMotel = () => {
+    const user_id = JSON.parse(sessionStorage.getItem("user_id"));
+    let conditions = {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + JSON.parse(sessionStorage.getItem("TOKEN")),
+        "Content-Type": "application/json",
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    };
+
+    fetch(`http://localhost:8888/motel/list/${user_id}`, conditions)
+      .then((response) => response.json())
+      .then((data) => {
+        const listRoom = data.result;
+        const listOption = document.getElementById("listMotel");
+        listRoom.map((item, index) => {
+          listOption.innerHTML += `<option value="${item.motel_id}">${item.motel_name}</option>`;
+        });
+      })
+      .catch((error) => console.log(error));
+  };
+
+  const listMotel = document.getElementById("listMotel");
+  listMotel.addEventListener("change", (e) => {
+    const value = e.target.value;
+    motel_id = value;
+    if (value === "") {
+      form.classList.add("none");
+    } else {
+      form.classList.remove("none");
+      getDetailMotel();
+    }
+  });
+  getListMotel();
+
+  const snakeBar = document.querySelector(".snake__bar");
+
+  const setSnakeBar = (value, type) => {
+    snakeBar.classList.add(`showSnake__bar__${type}`);
+    snakeBar.querySelector(".snake__value").innerHTML = value;
+    setTimeout(() => {
+      snakeBar.classList.remove(`showSnake__bar__${type}`);
+    }, 1000);
+  };
+
+  const hashtag = document.getElementById("hashtag");
+  const listInputText = form.querySelectorAll("input[type='text']");
+  const listSelect = form.querySelectorAll("select");
+  const description = document.getElementById("description");
+  const btn_reset = document.getElementById("btn_reset");
+
+  const btn_submit = document.getElementById("btn_submit");
+
+  btn_reset.addEventListener("click", () => {
+    formValue = {
+      motel_name: "",
+      address_basic: "",
+      lat: "",
+      lng: "",
+      price__basic: "",
+      phone_number: "",
+      hashtag: "",
+      province_id: "",
+      city_id: "",
+      ward_id: "",
+      type_payment_id: "",
+      type_motel_id: "",
+      description: "",
+    };
+  });
+  hashtag.addEventListener("input", (e) => {
+    const name = e.target.name;
+    const value = e.target.value;
+    formValue = {
+      ...formValue,
+      [name]: value,
+    };
+  });
+  document.getElementById("lat").addEventListener("input", (e) => {
+    const value = e.target.value;
+    if (value.trim() === "" || !Number(value)) {
+      document.getElementById("myBtn").classList.add("hidden");
+    } else {
+      document.getElementById("myBtn").classList.remove("hidden");
+    }
+  });
+  document.getElementById("lng").addEventListener("input", (e) => {
+    const value = e.target.value;
+    if (value.trim() === "" || !Number(value)) {
+      document.getElementById("myBtn").classList.add("hidden");
+    } else {
+      document.getElementById("myBtn").classList.remove("hidden");
+    }
+  });
+  document.getElementById("address_basic").addEventListener("change", (e) => {
+    const value = e.target.value;
+    let conditions = {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + JSON.parse(sessionStorage.getItem("TOKEN")),
+        "Content-Type": "application/json",
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    };
+
+    fetch(
+      `http://api.map4d.vn/sdk/place/text-search?key=${access_key}&text=${value}`,
+      conditions
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        const result = data.result[0];
+        document.getElementById("myBtn").classList.remove("hidden");
+        document.getElementById("lat").value = result.location.lat;
+        document.getElementById("lng").value = result.location.lng;
+      })
+      .catch((error) => console.log(error));
+  });
+  description.addEventListener("input", (e) => {
+    const name = e.target.name;
+    const value = e.target.value;
+    formValue = {
+      ...formValue,
+      [name]: value,
+    };
+  });
+  listInputText.forEach((item) => {
+    item.addEventListener("input", (e) => {
+      const name = e.target.name;
+      const value = e.target.value;
+      formValue = {
+        ...formValue,
+        [name]: value,
+      };
+    });
+  });
+  listSelect.forEach((item) => {
+    item.addEventListener("change", (e) => {
+      const name = e.target.name;
+      const value = e.target.value;
+      formValue = {
+        ...formValue,
+        [name]: value,
+      };
+    });
+  });
+  const getTypeMotel = () => {
+    let conditions = {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + JSON.parse(sessionStorage.getItem("TOKEN")),
+        "Content-Type": "application/json",
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    };
+
+    fetch(`http://localhost:8888/motel/type`, conditions)
+      .then((response) => response.json())
+      .then((data) => {
+        const listType = data.result;
+
+        const listOption = document.getElementById("list_motel");
+        listType.map((item, index) => {
+          listOption.innerHTML += `<option value="${item.type_motel_id}">${item.type_motel_name}</option>`;
+        });
+      })
+      .catch((error) => console.log(error));
+  };
+
+  const getPayment = () => {
+    let conditions = {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + JSON.parse(sessionStorage.getItem("TOKEN")),
+        "Content-Type": "application/json",
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    };
+
+    fetch(`http://localhost:8888/motel/type-payment`, conditions)
+      .then((response) => response.json())
+      .then((data) => {
+        const listType = data.result;
+
+        const listOption = document.getElementById("list_payment");
+        listType.map((item, index) => {
+          listOption.innerHTML += `<option value="${item.type_payment_id}">${item.type_payment_name}</option>`;
+        });
+      })
+      .catch((error) => console.log(error));
+  };
+  const getListProvince = () => {
+    let conditions = {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + JSON.parse(sessionStorage.getItem("TOKEN")),
+        "Content-Type": "application/json",
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    };
+
+    fetch(`http://localhost:8888/province/list`, conditions)
+      .then((response) => response.json())
+      .then((data) => {
+        const listType = data.result;
+
+        const listOption = document.getElementById("list_province");
+        listType.map((item, index) => {
+          listOption.innerHTML += `<option value="${item.province_id}">${item.province_name}</option>`;
+        });
+      })
+      .catch((error) => console.log(error));
+  };
+
+  const getCityByProvince = (id) => {
+    let conditions = {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + JSON.parse(sessionStorage.getItem("TOKEN")),
+        "Content-Type": "application/json",
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    };
+
+    fetch(`http://localhost:8888/city/get-by-province/${id}`, conditions)
+      .then((response) => response.json())
+      .then((data) => {
+        const listType = data.result;
+
+        const listOption = document.getElementById("list_city");
+        listType.map((item, index) => {
+          listOption.innerHTML += `<option value="${item.city_id}">${item.city_name}</option>`;
+        });
+      })
+      .catch((error) => console.log(error));
+  };
+
+  const getWardByCity = (id) => {
+    let conditions = {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + JSON.parse(sessionStorage.getItem("TOKEN")),
+        "Content-Type": "application/json",
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    };
+
+    fetch(`http://localhost:8888/ward/get-by-city/${id}`, conditions)
+      .then((response) => response.json())
+      .then((data) => {
+        const listType = data.result;
+
+        const listOption = document.getElementById("list_ward");
+        listType.map((item, index) => {
+          listOption.innerHTML += `<option value="${item.ward_id}">${item.ward_name}</option>`;
+        });
+      })
+      .catch((error) => console.log(error));
+  };
+  const province = document.getElementById("list_province");
+  province.addEventListener("change", (e) => {
+    const valueProvince = e.target.value;
+    getCityByProvince(valueProvince);
+    document.getElementById("container_city").classList.remove("none");
+    document.getElementById("container_ward").classList.add("none");
+    const name = e.target.name;
+    formValue = {
+      ...formValue,
+      [name]: valueProvince,
+    };
+  });
+  const city = document.getElementById("list_city");
+  city.addEventListener("change", (e) => {
+    document.getElementById("container_ward").classList.remove("none");
+    const valueCity = e.target.value;
+    getWardByCity(valueCity);
+  });
+
+  btn_submit.addEventListener("click", () => {
+    let isComplete = true;
+    const arrayEmpty = Object.values(formValue).filter((item) => {
+      if (item !== null && item !== undefined) {
+        return item.toString().trim() === "";
+      } else if (item === null || item === undefined) {
+        return item === null || item === undefined;
+      }
+    });
+
+    if (arrayEmpty.length > 0) {
+      isComplete = false;
+      setSnakeBar("Giá trị không được bỏ trống", "error");
+    }
+
+    if (
+      !Number(formValue.lat) &&
+      !Number(formValue.lng) &&
+      !Number(formValue.price__basic) &&
+      !Number(formValue.phone_number)
+    ) {
+      isComplete = false;
+
+      setSnakeBar("Giá trị chưa hợp lệ", "error");
+    }
+    if (isComplete) {
+      ///////
+      const newData = {
+        motel_id,
+        ...formValue,
+      };
+      updateMotel(newData);
+    }
+  });
+  getTypeMotel();
+  getListProvince();
+  getPayment();
+  function getDetailMotel() {
+    let conditions = {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + JSON.parse(sessionStorage.getItem("TOKEN")),
+        "Content-Type": "application/json",
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    };
+
+    fetch(
+      `http://localhost:8888/owner/motel/detail-by-id?motel_id=${motel_id}`,
+      conditions
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        const motel = data.result[0];
+        console.log(motel);
+        formValue = {
+          motel_name: motel.motel_name,
+          address_basic: motel.address_basic,
+          lat: motel.lat,
+          lng: motel.lng,
+          price__basic: motel.price__basic,
+          phone_number: motel.phone_number,
+          hashtag: motel.hashtag,
+          province_id: motel.province_id,
+          city_id: motel.city_id,
+          ward_id: motel.ward_id,
+          type_payment_id: motel.type_payment_id,
+          type_motel_id: motel.type_motel_id,
+          description: motel.description,
+        };
+        document.getElementById("motel_name").value = motel.motel_name;
+        document.getElementById("address_basic").value = motel.address_basic;
+        document.getElementById("lat").value = motel.lat;
+        document.getElementById("lng").value = motel.lng;
+        document.getElementById("price__basic").value = motel.price__basic;
+        document.getElementById("phone_number").value = motel.phone_number;
+        document.getElementById("list_motel").value = motel.type_motel_id;
+        document.getElementById("list_payment").value = motel.type_payment_id;
+        document.getElementById("hashtag").innerHTML = motel.hashtag;
+        document.getElementById("description").innerHTML = motel.description;
+        document.getElementById("list_province").value = motel.province_id;
+        getCityByProvince(motel.province_id);
+        getWardByCity(motel.city_id);
+        setTimeout(() => {
+          document.getElementById("list_city").value = motel.city_id;
+          document.getElementById("list_ward").value = motel.ward_id;
+        }, 300);
+      })
+      .catch((error) => console.log(error));
+  }
+
+  function updateMotel(data) {
+    let conditions = {
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + JSON.parse(sessionStorage.getItem("TOKEN")),
+        "Content-Type": "application/json",
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: JSON.stringify(data),
+    };
+
+    fetch(`http://localhost:8888/owner/motel/update`, conditions)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.result !== null) {
+          setSnakeBar("Cập nhật thông tin thành công", "success");
+          setTimeout(() => {
+            location.href = "http://localhost:3000/owner/list-motel";
+          }, 1000);
+        }
+      })
+      .catch((error) => console.log(error));
+  }
+</script>

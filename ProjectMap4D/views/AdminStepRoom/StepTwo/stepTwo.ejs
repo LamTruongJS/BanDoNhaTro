@@ -1,0 +1,37 @@
+<%- include('./style'); %>
+
+<nav
+  class="w-75 container-form-step_two"
+  id="step_two"
+  style="background: #fff; box-shadow: 2px 2px 7px #ddd"
+>
+  <div class="alert alert-danger" role="alert">
+    Vui lòng tải tệp tin để định dạng dữ liệu đầu vào cho phù hợp
+  </div>
+
+  <table id="tblStocks" cellpadding="0" cellspacing="0" class="none">
+    <tr>
+      <th>room_name</th>
+      <th>room_price</th>
+      <th>area</th>
+      <th>max_people</th>
+      <th>description</th>
+      <th>floor</th>
+      <th>furniture</th>
+      <th>service</th>
+      <th>type_room_id</th>
+    </tr>
+  </table>
+  <br />
+  <button id="btn__download__file" class="btn btn-info text-white">
+    <span class="glyphicon glyphicon-download"></span>
+    Vui lòng tải tệp
+  </button>
+</nav>
+<link
+  href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css"
+  rel="stylesheet"
+  integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor"
+  crossorigin="anonymous"
+/>
+<%- include('./javas'); %>

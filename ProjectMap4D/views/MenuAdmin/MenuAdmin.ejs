@@ -1,0 +1,77 @@
+<%- include("./style.ejs") %>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-2" id="ownerMenu">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#"
+      ><img src="/images/logoMap.png" alt="Logo"
+    /></a>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNavDarkDropdown"
+      aria-controls="navbarNavDarkDropdown"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavDarkDropdown">
+      <ul class="navbar-nav d-flex flex-grow-1">
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link"
+            href="http://localhost:3000/admin/manager-user"
+            id="navbarDarkDropdownMenuLink"
+            role="button"
+          >
+            Danh sách người dùng
+          </a>
+        </li>
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link"
+            href="http://localhost:3000/admin/manager/list-motel"
+            role="button"
+          >
+            Danh sách nhà trọ
+          </a>
+        </li>
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link"
+            href="http://localhost:3000/admin/manager/choose-owner"
+            role="button"
+          >
+            Thêm nhà trọ
+          </a>
+        </li>
+
+        <li class="nav-item dropdown flex-grow-1"></li>
+        <li
+          class="nav-item dropdown mx-5 px-3"
+          style="background-color: rgba(70, 71, 71, 0.671)"
+        >
+          <a
+            class="nav-link user_name"
+            href="#"
+            id="navbarDarkDropdownMenuLink"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            Lê Lâm Trường
+          </a>
+          <ul
+            class="dropdown-menu dropdown-menu-dark"
+            aria-labelledby="navbarDarkDropdownMenuLink"
+          >
+            <li>
+              <a class="dropdown-item" href="#" id="logout">Đăng xuất</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<%- include('./javas.ejs') %>

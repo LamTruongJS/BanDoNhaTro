@@ -1,0 +1,55 @@
+<%- include('./style'); %>
+
+<nav
+  class="w-100 container-form-step_four"
+  id="step_four"
+  style="background: #fff; box-shadow: 2px 2px 7px #ddd"
+>
+  <div
+    class="d-flex justify-content-center align-items-center position-relative mt-2"
+    style="cursor: pointer"
+  >
+    <button
+      type="button"
+      class="btn btn-outline-primary position-absolute"
+      style="cursor: pointer; z-index: 900"
+    >
+      <img
+        src="/images/upload.png"
+        alt="Upload"
+        style="width: 20px; height: 20px; cursor: pointer"
+      />
+      Tải lên tệp dữ liệu
+    </button>
+    <div
+      class="h-100 d-inline opacity-0"
+      style="
+        width: 200px;
+        height: 100%;
+        overflow: hidden;
+        cursor: pointer;
+        z-index: 999;
+      "
+    >
+      <input
+        type="file"
+        id="excel_file"
+        class="cursor-pointer"
+        style="cursor: pointer"
+      />
+    </div>
+  </div>
+
+  <div
+    id="excel_data_step_four"
+    class=""
+    style="height: 55vh; overflow: auto; width: 100%"
+  ></div>
+</nav>
+<link
+  href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css"
+  rel="stylesheet"
+  integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor"
+  crossorigin="anonymous"
+/>
+<%- include('./javas'); %>

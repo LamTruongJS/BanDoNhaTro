@@ -1,0 +1,100 @@
+<script type="text/javascript">
+  function getDataMotel() {
+    const user_id = JSON.parse(sessionStorage.getItem("user_id"));
+    let conditions = {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + JSON.parse(sessionStorage.getItem("TOKEN")),
+        "Content-Type": "application/json",
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    };
+    fetch(`http://localhost:8888/rent/list`, conditions)
+      .then((response) => response.json())
+      .then((data) => {
+        const rent = data.result;
+        const rentListRoom = [];
+        rent.forEach((item) => {
+          if (!rentListRoom.includes(item.room_id)) {
+            rentListRoom.push(item.room_id);
+          }
+        });
+        fetch(`http://localhost:8888/motel/list/${user_id}`, conditions)
+          .then((response) => response.json())
+          .then((dataListMotel) => {
+            const listMotel = dataListMotel.result;
+            const motelBody = document.querySelector(".body_table");
+            listMotel.map((item, indexListMotel) => {
+              fetch(
+                `http://localhost:8888/room/list?motel_id=${item.motel_id}`,
+                conditions
+              )
+                .then((res) => res.json())
+                .then((dataRoom) => {
+                  const listRoomHere = [];
+                  dataRoom.result.forEach((item) =>
+                    listRoomHere.push(item.room_id)
+                  );
+                  let isDelete = true;
+                  listRoomHere.map((item) => {
+                    if (isDelete) {
+                      isDelete = !rentListRoom.includes(item);
+                    }
+                  });
+                  motelBody.innerHTML += `<tr class='text-center'>
+                                      <td>${item.motel_name}</td>
+                                      <td>${item.address_basic}</td>
+                                     ${
+                                       isDelete
+                                         ? `<td class='text-success'>Được xóa</td><td><button type='button' id=${item.motel_id} class='btn btn-outline-dark btn-sm btn_delete'>Xóa</button></td>`
+                                         : "<td class='text-danger'>Không được xóa</td><td><button type='button' class='btn btn-outline-dark btn-sm' disabled>Xóa</button></td>"
+                                     }
+                                  </tr>`;
+                });
+            });
+          });
+      })
+      .then(() => {
+        setTimeout(() => {
+          const listButton = document.querySelectorAll(".btn_delete");
+          listButton.forEach((item) =>
+            item.addEventListener("click", () => {
+              const motel_id = item.getAttribute("id");
+              deleteMotel(motel_id);
+            })
+          );
+        }, 500);
+      })
+      .catch((error) => console.log(error));
+  }
+  getDataMotel();
+  const snakeBar = document.querySelector(".snake__bar");
+  const setSnakeBar = (value, type) => {
+    snakeBar.classList.add(`showSnake__bar__${type}`);
+    snakeBar.querySelector(".snake__value").innerHTML = value;
+    setTimeout(() => {
+      snakeBar.classList.remove(`showSnake__bar__${type}`);
+    }, 1000);
+  };
+  function deleteMotel(motel_id) {
+    let conditions = {
+      method: "DELETE",
+      headers: {
+        Authorization: "Bearer " + JSON.parse(sessionStorage.getItem("TOKEN")),
+        "Content-Type": "application/json",
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    };
+    fetch(
+      `http://localhost:8888/owner/motel/delete?motel_id=${motel_id}`,
+      conditions
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        setSnakeBar("Xóa Thành Công", "success");
+        setTimeout(() => {
+          location.href = "http://localhost:3000/owner/list-motel";
+        }, 500);
+      });
+  }
+</script>

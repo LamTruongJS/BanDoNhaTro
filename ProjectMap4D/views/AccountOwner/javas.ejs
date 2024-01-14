@@ -1,0 +1,167 @@
+<script>
+  const user_id = JSON.parse(sessionStorage.getItem("user_id"));
+  const form = document.getElementById("form");
+  const username = document.getElementById("username");
+  const password = document.getElementById("password");
+  const email = document.getElementById("email");
+  const numberPhone = document.getElementById("numberPhone");
+  const btn__edit = document.getElementById("btn__edit");
+  const btn__cancel = document.getElementById("btn__cancel");
+  const bnt__save = document.getElementById("bnt__save");
+  const snakeBar = document.querySelector(".snake__bar");
+  let formData = {
+    username: username.value,
+    password: password.value,
+    email: email.value,
+    numberPhone: numberPhone.value,
+  };
+
+  const setSnakeBar = (value, type) => {
+    snakeBar.classList.add(`showSnake__bar__${type}`);
+    snakeBar.querySelector(".snake__value").innerHTML = value;
+    setTimeout(() => {
+      snakeBar.classList.remove(`showSnake__bar__${type}`);
+    }, 1000);
+  };
+  const getUserInfo = () => {
+    let conditions = {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + JSON.parse(sessionStorage.getItem("TOKEN")),
+        "Content-Type": "application/json",
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    };
+
+    fetch(`http://localhost:8888/user/info/${user_id}`, conditions)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.result.length > 0) {
+          const user = data.result[0];
+
+          username.value = user.username;
+          password.value = user.password;
+          email.value = user.email;
+          numberPhone.value = user.numberPhone;
+          formData = {
+            username: user.username,
+            password: user.password,
+            email: user.email,
+            numberPhone: user.numberPhone ?? "",
+            isGoogle: user.isGoogle,
+          };
+          const notification = document.getElementById("showNotiferGoogle");
+          if (!user.isGoogle) {
+            notification.classList.add("hidden");
+            notification.innerHTML = "";
+          } else {
+            notification.classList.remove("hidden");
+            notification.innerHTML =
+              "Lưu ý: Với tài khoản Google bạn chỉ có thể thay đổi số điện thoại";
+          }
+        }
+      })
+      .catch((error) => console.log(error));
+  };
+  getUserInfo();
+
+  form.querySelectorAll("input").forEach((item) => {
+    item.addEventListener("change", (event) => {
+      const name = event.target.name;
+      const value = event.target.value;
+      formData = {
+        ...formData,
+        [name]: value,
+      };
+    });
+  });
+  function toggleForm() {
+    btnGroup = document.getElementById("layout__btn");
+    btnGroup.querySelectorAll("button").forEach((element) => {
+      element.classList.toggle("btn__none");
+    });
+    if (!formData.isGoogle) {
+      username.toggleAttribute("readonly");
+      username.classList.toggle("layout__disabled");
+      password.toggleAttribute("readonly");
+      password.classList.toggle("layout__disabled");
+      numberPhone.toggleAttribute("readonly");
+      numberPhone.classList.toggle("layout__disabled");
+    } else {
+      numberPhone.toggleAttribute("readonly");
+      numberPhone.classList.toggle("layout__disabled");
+    }
+  }
+  const editAccount = (data) => {
+    let conditions = {
+      method: "PUT",
+      headers: {
+        Authorization: "Bearer " + JSON.parse(sessionStorage.getItem("TOKEN")),
+        "Content-Type": "application/json",
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: JSON.stringify(data),
+    };
+
+    fetch(`http://localhost:8888/user/change-info/${user_id}`, conditions)
+      .then((response) => response.json())
+      .then((data) => {
+        const user = data.result;
+        username.value = user.username;
+        password.value = user.password;
+        email.value = user.email;
+        numberPhone.value = user.numberPhone;
+
+        formData = {
+          ...formData,
+          username: user.username,
+          password: user.password,
+          email: user.email,
+          numberPhone: user.numberPhone,
+        };
+        setSnakeBar("Cập nhật thành công", "success");
+        toggleForm();
+      })
+      .catch((error) => {
+        setSnakeBar("Cập nhật Không thành công", "error");
+        console.log(error);
+      });
+  };
+  btn__edit.addEventListener("click", () => {
+    toggleForm();
+  });
+  btn__cancel.addEventListener("click", () => {
+    toggleForm();
+    getUserInfo();
+  });
+  btn__save.addEventListener("click", () => {
+    switch (formData.isGoogle) {
+      case false: {
+        if (
+          formData.username.trim() === "" ||
+          formData.password.trim() === "" ||
+          formData.numberPhone.trim() === ""
+        ) {
+          setSnakeBar("Giá trị không được để trống", "error");
+        } else if (isNaN(formData.numberPhone)) {
+          setSnakeBar("Số điện thoại chưa phù hợp", "error");
+        } else {
+          editAccount(formData);
+        }
+        break;
+      }
+      case true: {
+        if (formData.numberPhone.trim() === "") {
+          setSnakeBar("Giá trị không được để trống", "error");
+        } else if (isNaN(formData.numberPhone)) {
+          setSnakeBar("Số điện thoại chưa phù hợp", "error");
+        } else {
+          editAccount(formData);
+        }
+        break;
+      }
+      default:
+        return false;
+    }
+  });
+</script>

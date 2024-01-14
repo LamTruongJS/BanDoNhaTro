@@ -1,0 +1,192 @@
+<script>
+  const TOKEN = sessionStorage.getItem("TOKEN");
+  if (!TOKEN) {
+    location.href = "/login";
+  }
+  const role = JSON.parse(sessionStorage.getItem("role"));
+  if (role != "customer") {
+    location.href = "/not-found";
+  }
+  var swiper = new Swiper(".mySwiper", {
+    loop: true,
+    spaceBetween: 10,
+    slidesPerView: 10,
+    freeMode: true,
+    watchSlidesProgress: true,
+  });
+  var swiper2 = new Swiper(".mySwiper2", {
+    loop: false,
+    spaceBetween: 10,
+    navigation: {
+      nextEl: ".swiper-button-next",
+      prevEl: ".swiper-button-prev",
+    },
+    thumbs: {
+      swiper: swiper,
+    },
+  });
+
+  function initMap() {
+    const motel_id = document.getElementById("motel_id").innerHTML;
+    const motel_name = document.getElementById("motel_name");
+    const motel_address = document.getElementById("motel_address");
+    const motel_info = document.getElementById("motel_info");
+    const list_room_container = document.getElementById("listRoom");
+    const btnMoreMotel = document.getElementById("btnMoreMotel");
+    const btnOpenMap = document.getElementById("btnOpenMap");
+    let locationMotel = {
+      lat: 16.072163491469226,
+      lng: 108.22690536081757,
+    };
+    let options = {
+      center: { lat: locationMotel.lat, lng: locationMotel.lng },
+      zoom: 15,
+      controls: true,
+    };
+
+    const getDetailMotel = () => {
+      let conditions = {
+        method: "GET",
+        headers: {
+          Authorization:
+            "Bearer " + JSON.parse(sessionStorage.getItem("TOKEN")),
+          "Content-Type": "application/json",
+          // 'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      };
+
+      fetch(
+        `http://localhost:8888/motel/detail-by-id?motel_id=${motel_id}`,
+        conditions
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          const motel = data.result[0];
+          locationMotel = { lat: Number(motel.lat), lng: Number(motel.lng) };
+          options = {
+            center: { lat: Number(motel.lat), lng: Number(motel.lng) },
+            zoom: 15,
+            controls: true,
+          };
+
+          motel_name.innerHTML = motel.motel_name;
+          motel_address.innerHTML = motel.address_basic;
+          motel_info.innerHTML = `Chính chủ cho thuê phòng trọ:
+                                  <br />
+                                  - Địa chỉ: ${motel.address_basic}
+                                  <br />
+                                  - Nhà trọ dành cho: ${motel.type_motel_name}
+                                  <br />
+                                  - Hình thức thanh toán:${motel.type_payment_name}
+                                  <br />
+                                  - Liên hệ: ${motel.user.username}
+                                  <span class="motel__body__info__value__numberPhone"
+                                    >${motel.user.numberPhone}</span
+                                  >
+                                  <br />
+                                  - Email:
+                                  <span class="motel__body__info__value__email">
+                                    ${motel.user.email}</span
+                                  >`;
+        });
+
+      setTimeout(() => {
+        let map = new map4d.Map(document.getElementById("map2"), options);
+        let marker = new map4d.Marker({
+          position: options.center,
+          anchor: [0.5, 0.5],
+          EventOptions: true,
+        });
+
+        marker.setMap(map);
+      }, 500);
+    };
+    btnOpenMap.addEventListener("click", () => {
+      location.href = `http://localhost:3000/map?lat=${locationMotel.lat}&lng=${locationMotel.lng}`;
+    });
+    getDetailMotel();
+    const getListRoom = () => {
+      let conditions = {
+        method: "GET",
+        headers: {
+          Authorization:
+            "Bearer " + JSON.parse(sessionStorage.getItem("TOKEN")),
+          "Content-Type": "application/json",
+          // 'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      };
+
+      fetch(`http://localhost:8888/room/list?motel_id=${motel_id}`, conditions)
+        .then((response) => response.json())
+        .then((data) => {
+          const list = data.result;
+          console.log(list);
+          for (let i = 0; i < list.length; i++) {
+            const item = list[i];
+            const price = new Intl.NumberFormat("vi-VN", {
+              style: "currency",
+              currency: "VND",
+            }).format(item.room_price);
+            if (i === 0) {
+              list_room_container.innerHTML = ` <div class="room__item">
+                                                  <div class='d-none room_id'>${item.room_id}</div>
+                                                  <div class="room__item__img">
+                                                    <img src="https://maps.gstatic.com/tactile/pane/default_geocode-1x.png" alt="room image" />
+                                                  </div>
+                                                  <div class="room__item__container">
+                                                    <div class="rom__item__container__header">
+                                                      <div class="room__item__name">${item.room_name}</div>
+                                                      <span
+                                                        class="badge badge-pill badge-success room__item__status"
+                                                        >${item.status}</span
+                                                      >
+                                                    </div>
+                                                    <div class="room__item__container__body">
+                                                      <p>Diện tích: ${item.area}m<sup>2</sup></p>
+                                                      <p>Số người ở tối đa ${item.max_people}</p>
+                                                      <p>Đơn giá: ${price}</p>
+                                                    </div>
+                                                  </div>
+                                                </div>`;
+            } else {
+              list_room_container.innerHTML += ` <div class="room__item">
+                                                  <div class='d-none room_id'>${item.room_id}</div>
+                                                  <div class="room__item__img">
+                                                    <img src="https://maps.gstatic.com/tactile/pane/default_geocode-1x.png" alt="room image" />
+                                                  </div>
+                                                  <div class="room__item__container">
+                                                    <div class="rom__item__container__header">
+                                                      <div class="room__item__name">${item.room_name}</div>
+                                                      <span
+                                                        class="badge badge-pill badge-success room__item__status"
+                                                        >${item.status}</span
+                                                      >
+                                                    </div>
+                                                    <div class="room__item__container__body">
+                                                      <p>Diện tích: ${item.area}m<sup>2</sup></p>
+                                                      <p>Số người ở tối đa ${item.max_people}</p>
+                                                      <p>Đơn giá: ${price}</p>
+                                                    </div>
+                                                  </div>
+                                                </div>`;
+            }
+          }
+          const roomItemList =
+            list_room_container.querySelectorAll(".room__item");
+          roomItemList.forEach((item) => {
+            item.addEventListener("click", () => {
+              const room_id = item.querySelector(".room_id").innerHTML;
+              location.href = `http://localhost:3000/motel/${motel_id}/room/${room_id}`;
+            });
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    };
+    getListRoom();
+    btnMoreMotel.addEventListener("click", () => {
+      location.href = `http://localhost:3000/motel/${motel_id}/list`;
+    });
+  }
+</script>

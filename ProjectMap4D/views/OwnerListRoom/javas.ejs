@@ -1,0 +1,201 @@
+<script>
+  const motel_id = document.getElementById("motel_id").innerHTML;
+  const containerListRoom = document.getElementById("listRoom");
+  const filterPrice = document.getElementById("filterPrice");
+  const filterArea = document.getElementById("filterArea");
+  const filterStatus = document.getElementById("filterStatus");
+  const snakeBar = document.querySelector(".snake__bar");
+
+  const setSnakeBar = (value, type) => {
+    snakeBar.classList.add(`showSnake__bar__${type}`);
+    snakeBar.querySelector(".snake__value").innerHTML = value;
+    setTimeout(() => {
+      snakeBar.classList.remove(`showSnake__bar__${type}`);
+    }, 1000);
+  };
+  const getListRoom = () => {
+    let options = {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + JSON.parse(sessionStorage.getItem("TOKEN")),
+        "Content-Type": "application/json",
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    };
+
+    fetch(`http://localhost:8888/room/list?motel_id=${motel_id}`, options)
+      .then((response) => response.json())
+      .then((data) => {
+        // console.log(data);
+        for (let i = 0; i < data.result.length; i++) {
+          const item = data.result[i];
+          const price = new Intl.NumberFormat("vi-VN", {
+            style: "currency",
+            currency: "VND",
+          }).format(item.room_price);
+          if (i === 0) {
+            containerListRoom.innerHTML = `  <div class="list__room__item">
+                                                <a href="http://localhost:3000/owner/motel/${motel_id}/room/${item.room_id}">
+                                                    <div class="list__room__item__img">
+                                                    <img src="https://maps.gstatic.com/tactile/pane/default_geocode-1x.png" />
+                                                    </div>
+                                                    <div class="list__room__item__info">
+                                                    <h3 class="list__room__item__info__title">${item.room_name}</h3>
+                                                    <div class="list__room__item__info__config">
+                                                        <span class="config__price">${price}/tháng</span>
+                                                        <span class="config__dot">·</span>
+                                                        <span class="config__area">${item.area} m<sup>2</sup></span>
+                                                        <span class="config__dot">·</span>
+                                                        <span class="config__area">${item.status}</span>
+                                                    </div>
+                                                    <span class="list__room__item__info__location"
+                                                        >Địa chỉ:</span
+                                                    >
+                                                    <span class="list__room__item__info__desc"
+                                                        >${item.description}</span
+                                                    >
+                                                    </div>
+                                                </a>
+                                                </div>`;
+          } else {
+            containerListRoom.innerHTML += `  <div class="list__room__item">
+                                                <a href="http://localhost:3000/owner/motel/${motel_id}/room/${item.room_id}">
+                                                    <div class="list__room__item__img">
+                                                    <img src="https://maps.gstatic.com/tactile/pane/default_geocode-1x.png" />
+                                                    </div>
+                                                    <div class="list__room__item__info">
+                                                    <h3 class="list__room__item__info__title">${item.room_name}</h3>
+                                                    <div class="list__room__item__info__config">
+                                                        <span class="config__price">${price}/tháng</span>
+                                                        <span class="config__dot">·</span>
+                                                        <span class="config__area">${item.area} m<sup>2</sup></span>
+                                                        <span class="config__dot">·</span>
+                                                        <span class="config__area">${item.status}</span>
+                                                    </div>
+                                                    <span class="list__room__item__info__location"
+                                                        >Địa chỉ:</span
+                                                    >
+                                                    <span class="list__room__item__info__desc"
+                                                        >${item.description}</span
+                                                    >
+                                                    </div>
+                                                </a>
+                                                </div>`;
+          }
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  const getFilterRoom = (data) => {
+    let options = {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + JSON.parse(sessionStorage.getItem("TOKEN")),
+        "Content-Type": "application/json",
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    };
+
+    fetch(
+      `http://localhost:8888/motel/${motel_id}/filter?price_gte=${data.price_gte}&price_lte=${data.price_lte}&area=${data.area}&status=${data.status}`,
+      options
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        if (data.result.length === 0) {
+          setSnakeBar("Không có kết quả phù hơp", "error");
+        }
+        for (let i = 0; i < data.result.length; i++) {
+          const item = data.result[i];
+          const price = new Intl.NumberFormat("vi-VN", {
+            style: "currency",
+            currency: "VND",
+          }).format(item.room_price);
+          if (i === 0) {
+            containerListRoom.innerHTML = `  <div class="list__room__item">
+                                                <a href="http://localhost:3000/owner/motel/${motel_id}/room/${item.room_id}">
+                                                    <div class="list__room__item__img">
+                                                    <img src="https://maps.gstatic.com/tactile/pane/default_geocode-1x.png" />
+                                                    </div>
+                                                    <div class="list__room__item__info">
+                                                    <h3 class="list__room__item__info__title">${item.room_name}</h3>
+                                                    <div class="list__room__item__info__config">
+                                                        <span class="config__price">${price}/tháng</span>
+                                                        <span class="config__dot">·</span>
+                                                        <span class="config__area">${item.area} m<sup>2</sup></span>
+                                                        <span class="config__dot">·</span>
+                                                        <span class="config__area">${item.status}</span>
+                                                    </div>
+                                                    <span class="list__room__item__info__location"
+                                                        >Địa chỉ:</span
+                                                    >
+                                                    <span class="list__room__item__info__desc"
+                                                        >${item.description}</span
+                                                    >
+                                                    </div>
+                                                </a>
+                                                </div>`;
+          } else {
+            containerListRoom.innerHTML += `  <div class="list__room__item">
+                                                <a href="http://localhost:3000/owner/motel/${motel_id}/room/${item.room_id}">
+                                                    <div class="list__room__item__img">
+                                                    <img src="https://maps.gstatic.com/tactile/pane/default_geocode-1x.png" />
+                                                    </div>
+                                                    <div class="list__room__item__info">
+                                                    <h3 class="list__room__item__info__title">${item.room_name}</h3>
+                                                    <div class="list__room__item__info__config">
+                                                        <span class="config__price">${price}/tháng</span>
+                                                        <span class="config__dot">·</span>
+                                                        <span class="config__area">${item.area} m<sup>2</sup></span>
+                                                        <span class="config__dot">·</span>
+                                                        <span class="config__area">${item.status}</span>
+                                                    </div>
+                                                    <span class="list__room__item__info__location"
+                                                        >Địa chỉ:</span
+                                                    >
+                                                    <span class="list__room__item__info__desc"
+                                                        >${item.description}</span
+                                                    >
+                                                    </div>
+                                                </a>
+                                                </div>`;
+          }
+        }
+      })
+      .catch((error) => console.log(error));
+  };
+  const data = {
+    price_gte: "",
+    price_lte: "",
+    area: "",
+    status: "",
+  };
+  const priceInput = filterPrice.querySelectorAll('input[type="radio"]');
+  console.log(priceInput);
+  priceInput.forEach((input) => {
+    input.addEventListener("input", () => {
+      data.price_gte = input.value.split("-")[0];
+      data.price_lte = input.value.split("-")[1];
+      getFilterRoom(data);
+    });
+  });
+  const AreaInput = filterArea.querySelectorAll('input[type="radio"]');
+  AreaInput.forEach((input) => {
+    input.addEventListener("input", () => {
+      data.area = input.value;
+      getFilterRoom(data);
+    });
+  });
+  const StatusInput = filterStatus.querySelectorAll('input[type="radio"]');
+
+  StatusInput.forEach((input) => {
+    input.addEventListener("input", () => {
+      data.status = input.value;
+      getFilterRoom(data);
+    });
+  });
+  getListRoom();
+</script>

@@ -1,0 +1,233 @@
+<script>
+  const container = document.querySelector(".container");
+  const chooseRole = document.querySelector(".choose__role");
+  const btnCloseChooseRole = chooseRole.querySelector(".choose__role__button");
+  const roleList = chooseRole.querySelectorAll("input[type=radio]");
+  const btnLoginGoogle = document.querySelector(".btnLoginGoogle");
+  const btnConfirmRole = chooseRole.querySelector(
+    ".choose__role__button__confirm"
+  );
+
+  btnCloseChooseRole.addEventListener("click", () => {
+    chooseRole.classList.remove("show__choose__role");
+  });
+
+  let formValue = {
+    user_id: "",
+    email: "",
+    username: "",
+    role: "landlord",
+  };
+  const handleSnakeBar = (value) => {
+    const snakeBar = document.getElementById("snake__bar");
+    snakeBar.classList.add("showSnakeBar");
+    snakeBar.querySelector(".snake__text").innerHTML = value;
+    setTimeout(() => {
+      snakeBar.classList.remove("showSnakeBar");
+    }, 2000);
+  };
+  function login(data) {
+    let options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: JSON.stringify(data),
+    };
+    fetch("http://localhost:8888/user/login", options)
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        if (data?.result.length > 0) {
+          sessionStorage.setItem(
+            "user_id",
+            JSON.stringify(data.result[0].user[0].user_id)
+          );
+          sessionStorage.setItem("TOKEN", JSON.stringify(data.result[0].token));
+          switch (data.result[0].user[0].role_id) {
+            case "ID_001": {
+              sessionStorage.setItem("role", JSON.stringify("admin"));
+              console.log(sessionStorage.getItem("role"));
+              location.href = "http://localhost:3000/admin/manager-user";
+              break;
+            }
+            case "ID_002": {
+              sessionStorage.setItem("role", JSON.stringify("customer"));
+              location.href = "http://localhost:3000/";
+              break;
+            }
+            case "ID_003": {
+              sessionStorage.setItem("role", JSON.stringify("landlord"));
+              location.href = "http://localhost:3000/owner/list-motel";
+              break;
+            }
+            default: {
+              sessionStorage.setItem("role", JSON.stringify("admin"));
+              console.log(sessionStorage.getItem("role"));
+              location.href = "http://localhost:3000/admin/manager-user";
+              break;
+            }
+          }
+        } else {
+          handleSnakeBar("Email hoặc mật khẩu không chính xác");
+        }
+      })
+      .catch((error) => console.log(error));
+  }
+  const btn_submit = document.getElementById("submit");
+
+  btn_submit.addEventListener("click", (e) => {
+    e.preventDefault();
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    const data = {
+      email,
+      password,
+    };
+    if (data.email === "" || data.password === "") {
+      handleSnakeBar("Vui lòng nhập đầy đủ thông tin");
+    } else {
+      login(data);
+    }
+  });
+
+  function loginGoogle(data) {
+    let options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: JSON.stringify(data),
+    };
+    fetch("http://localhost:8888/user/loginGoogle", options)
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        //Check trường hợp chưa có tài khoảng
+        if (data.result.error !== undefined) {
+          handleSnakeBar("Email đã tồn tại");
+        } else if (data.result.length === 0) {
+          chooseRole.classList.add("show__choose__role");
+          roleList.forEach((role) =>
+            role.addEventListener("input", (e) => {
+              const value = e.target.value;
+              const name = e.target.name;
+              formValue = {
+                ...formValue,
+                [name]: value,
+              };
+            })
+          );
+          console.log(formValue);
+        } else {
+          // trường hợp đã có tài khoảng
+          sessionStorage.setItem(
+            "user_id",
+            JSON.stringify(data.result[0].user[0].user_id)
+          );
+          sessionStorage.setItem("TOKEN", JSON.stringify(data.result[0].token));
+          switch (data.result[0].user[0].role_id) {
+            case "ID_001": {
+              sessionStorage.setItem("role", JSON.stringify("admin"));
+              location.href = "http://localhost:3000/admin/manager-user";
+              break;
+            }
+            case "ID_002": {
+              sessionStorage.setItem("role", JSON.stringify("customer"));
+              location.href = "http://localhost:3000/";
+              break;
+            }
+            case "ID_003": {
+              sessionStorage.setItem("role", JSON.stringify("landlord"));
+              location.href = "http://localhost:3000/owner/list-motel";
+              break;
+            }
+            default: {
+              sessionStorage.setItem("role", JSON.stringify("admin"));
+              break;
+            }
+          }
+        }
+      })
+      .catch((error) => console.log(error));
+  }
+
+  var clicked = false;
+  function ClickLoginGoogle() {
+    clicked = true;
+  }
+  btnLoginGoogle.addEventListener("click", ClickLoginGoogle);
+  function onSignIn(googleUser) {
+    if (clicked) {
+      let profile = googleUser.getBasicProfile();
+      const email = profile.getEmail();
+      const username = profile.getName();
+      const user_id = profile.getId();
+
+      formValue = {
+        ...formValue,
+        email,
+        username,
+        user_id,
+      };
+      loginGoogle(formValue);
+      // console.log(formValue);
+      // console.log("profile", profile);
+      // console.log("ID: " + profile.getId()); // Do not send to your backend! Use an ID token instead.
+      // console.log("Name: " + profile.getName());
+      // console.log("Image URL: " + profile.getImageUrl());
+      // console.log("Email: " + profile.getEmail()); // This is null if the 'email' scope is not present.
+    }
+  }
+
+  function registerGoogle(data) {
+    let options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: JSON.stringify(data),
+    };
+    fetch("http://localhost:8888/user/registerGoogle", options)
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        if (data.result.length > 0) {
+          const user_id = data.result[0].user.user_id;
+          sessionStorage.setItem("user_id", JSON.stringify(user_id));
+          sessionStorage.setItem("TOKEN", JSON.stringify(data.result[0].token));
+          switch (data.result[0].user.role_id) {
+            case "ID_001": {
+              sessionStorage.setItem("role", JSON.stringify("admin"));
+              location.href = "http://localhost:3000/admin/manager-user";
+              break;
+            }
+            case "ID_002": {
+              sessionStorage.setItem("role", JSON.stringify("customer"));
+              location.href = "http://localhost:3000/";
+              break;
+            }
+            case "ID_003": {
+              sessionStorage.setItem("role", JSON.stringify("landlord"));
+              location.href = "http://localhost:3000/owner/list-motel";
+              break;
+            }
+            default: {
+              sessionStorage.setItem("role", JSON.stringify("admin"));
+              break;
+            }
+          }
+        }
+      })
+      .catch((error) => console.log(error));
+  }
+  btnConfirmRole.addEventListener("click", () => {
+    registerGoogle(formValue);
+  });
+</script>

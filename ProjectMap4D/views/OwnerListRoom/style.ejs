@@ -1,0 +1,292 @@
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+
+    overflow: hidden;
+  }
+  .activeMenu {
+    background-color: #2729cf !important;
+  }
+  .snake__bar {
+    position: absolute;
+    top: 50px;
+    left: 100%;
+    display: flex;
+    padding: 0 16px;
+    justify-content: flex-start;
+    align-items: center;
+    background: #fff;
+    width: 250px;
+    height: 48px;
+    border-left: 3px solid #db2222;
+    transition: all 0.5s ease;
+    opacity: 0;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  }
+  .showSnake__bar__error {
+    border-left: 3px solid #db2222;
+    transform: translateX(-102%);
+    opacity: 1;
+    z-index: 999;
+  }
+
+  .showSnake__bar__success {
+    border-left: 3px solid #16fc29;
+    transform: translateX(-102%);
+    opacity: 1;
+    z-index: 999;
+  }
+  #list__room {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  #list__room > .header {
+    margin: 0;
+    margin-bottom: 20px;
+    height: 44px;
+    width: 100%;
+    padding: 10px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  }
+  #list__room > .header > .icon__back {
+    display: flex;
+    align-items: center;
+    padding: 3px;
+  }
+  #list__room > .header > .icon__back:hover {
+    cursor: pointer;
+    background-color: rgb(232, 230, 230);
+  }
+  #list__room > .header > .icon__back > .img__back {
+    background-color: transparent;
+    width: 20px;
+    height: 20px;
+  }
+  #list__room > .header > .header__title {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+  }
+  .list__room__container {
+    font-family: "Roboto Regular" !important;
+    overflow-y: auto;
+    max-height: 90vh;
+  }
+  .list__room__container__title {
+    font-family: "Nunito Bold" !important;
+    font-size: 24px;
+    line-height: 32px;
+    font-weight: bold !important;
+    color: #2c2c2c;
+    display: block;
+    margin: 0;
+    padding: 0;
+    vertical-align: baseline;
+    border: none;
+    margin-bottom: 20px;
+  }
+  .list__room__container__container {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 20px;
+  }
+  .list__room__item {
+    height: 150px;
+    width: 100%;
+    border-radius: 4px;
+    border: 1px solid #f2f2f2;
+    box-sizing: border-box;
+    box-shadow: 0px 4px 6px 0px rgb(44 44 44 / 4%);
+
+    font-size: 14px;
+    line-height: 20px;
+    margin: 0;
+    margin-bottom: 16px;
+    padding: 0;
+    vertical-align: baseline;
+  }
+  .list__room__item:hover {
+    box-shadow: 0px 8px 16px 0px rgb(0 0 0 / 8%);
+  }
+  .list__room__item > a {
+    display: flex;
+    justify-content: flex-start;
+    text-decoration: none;
+    font-family: "Roboto Regular" !important;
+    font-size: 14px;
+    line-height: 20px;
+    margin: 0;
+    padding: 0;
+    vertical-align: baseline;
+    border: none;
+    color: #000;
+  }
+  .list__room__item__img {
+    position: relative;
+    width: 200px;
+    min-width: 200px;
+    display: block;
+    overflow: hidden;
+  }
+  .list__room__item__img > img {
+    height: calc(150px - 0.5px);
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+    margin-top: -1px;
+    width: 100%;
+  }
+  .list__room__item__info {
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    padding-left: 24px;
+    box-sizing: border-box;
+  }
+  .list__room__item__info__title {
+    color: #004e7f;
+    font-family: "Roboto Regular" !important;
+    font-size: 22px;
+    line-height: 20px;
+    margin: 0;
+    padding: 0;
+    vertical-align: baseline;
+    border: none;
+    margin-bottom: 5px;
+  }
+  .list__room__item__info__config {
+    margin-top: 8px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+  }
+  .config__dot {
+    font-family: "Roboto Regular" !important;
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: normal !important;
+    color: #999;
+    margin: 0 8px;
+  }
+  .list__room__item__info__location {
+    margin-top: 8px;
+  }
+  .list__room__item__info__desc {
+    margin-top: 8px;
+    clear: left;
+    font-family: "Roboto Regular" !important;
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: normal !important;
+    color: #505050;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden !important;
+    -webkit-line-clamp: 2;
+  }
+  .list__room__filter__price {
+    border: 1px solid #f2f2f2;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 16px;
+  }
+  .list__room__filter__price > h2 {
+    font-family: "Nunito Bold" !important;
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: bold !important;
+  }
+  .list__room__filter__price > h3 {
+    color: #2c2c2c;
+    margin-bottom: 12px;
+    font-family: "Roboto Regular" !important;
+    font-size: 14px;
+    line-height: 20px;
+    margin: 0;
+    padding: 0;
+    vertical-align: baseline;
+    border: none;
+  }
+  .list__room__filter__price > h3 > label {
+    color: #2c2c2c;
+    margin-bottom: 12px;
+    font-family: "Roboto Regular" !important;
+    font-size: 14px;
+    line-height: 20px;
+    margin: 0;
+    padding: 0;
+    padding-bottom: 5px;
+    margin-left: 5px;
+    vertical-align: baseline;
+    border: none;
+    cursor: pointer;
+  }
+  .list__room__filter__price > h3 > input[type="radio"] {
+    margin-top: 5px;
+  }
+  .list__room__filter__price > h3 > label:hover {
+    color: #999;
+    cursor: pointer;
+  }
+  .list__room__filter__area {
+    border: 1px solid #f2f2f2;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 16px;
+  }
+  .list__room__filter__area > h2 {
+    font-family: "Nunito Bold" !important;
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: bold !important;
+  }
+  .list__room__filter__area > h3 {
+    color: #2c2c2c;
+    margin-bottom: 12px;
+    font-family: "Roboto Regular" !important;
+    font-size: 14px;
+    line-height: 20px;
+    margin: 0;
+    padding: 0;
+    vertical-align: baseline;
+    border: none;
+  }
+  .list__room__filter__area > h3:hover {
+    color: #999;
+    cursor: pointer;
+  }
+  .list__room__filter__area > h3 > label {
+    color: #2c2c2c;
+    margin-bottom: 12px;
+    font-family: "Roboto Regular" !important;
+    font-size: 14px;
+    line-height: 20px;
+    margin: 0;
+    padding: 0;
+    padding-bottom: 5px;
+    margin-left: 5px;
+    vertical-align: baseline;
+    border: none;
+    cursor: pointer;
+  }
+  .list__room__filter__area > h3 > input[type="radio"] {
+    margin-top: 5px;
+  }
+  .list__room__filter__area > h3 > label:hover {
+    color: #999;
+    cursor: pointer;
+  }
+</style>

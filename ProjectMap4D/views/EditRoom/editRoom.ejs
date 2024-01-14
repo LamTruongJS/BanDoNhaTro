@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor"
+      crossorigin="anonymous"
+    />
+    <title>Chỉnh Sửa Phòng Trọ</title>
+    <link rel="icon" type="image/x-icon" href="/images/logoMap.png" />
+    <script
+      type="text/javascript"
+      src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"
+    ></script>
+  </head>
+  <%- include('./style'); %>
+  <body class="h-100 w-100">
+    <%- include('../MenuOwner/MenuOwner.ejs'); %>
+    <div class="snake__bar">
+      <div class="snake__value"></div>
+    </div>
+    <div
+      class="m-2 container-form"
+      style="display: flex; justify-content: center"
+    >
+      <div
+        class="w-75 border border-1"
+        style="background: #fff; box-shadow: 2px 2px 7px #ddd"
+      >
+        <p
+          class="text-center text-white text-uppercase p-2"
+          style="background-color: rgb(75, 77, 80)"
+        >
+          Chỉnh sửa thông tin phòng trọ
+        </p>
+        <div class="row">
+          <div class="p-2 col-4 offset-1">
+            <label for="exampleInputEmail1" class="form-label"
+              >Chọn nhà trọ bạn của bạn</label
+            >
+            <select
+              class="form-select shadow-none form-select-sm"
+              aria-label=".form-select-sm example"
+              name="motel_id"
+              id="listMotel"
+            >
+              <option value="" checked>------</option>
+            </select>
+          </div>
+          <div class="p-2 col-4 offset-1" id="containerLisRoom">
+            <label for="exampleInputEmail1" class="form-label"
+              >Chọn phòng trọ bạn của bạn</label
+            >
+            <select
+              class="form-select shadow-none form-select-sm"
+              aria-label=".form-select-sm example"
+              name="room_id"
+              id="listRoom"
+            >
+              <option value="" checked>------</option>
+            </select>
+          </div>
+        </div>
+        <form class="p-4 overflow-y-auto" id="form">
+          <div class="mb-1 row">
+            <div class="col-5">
+              <label class="form-label">Tên phòng trọ</label>
+              <input
+                type="text"
+                class="form-control shadow-none form-control-sm"
+                id="room_name"
+                name="room_name"
+              />
+            </div>
+            <div class="col-5 offset-2">
+              <label for="exampleInputEmail1" class="form-label"
+                >Loại phòng trọ</label
+              >
+              <select
+                class="form-select shadow-none form-select-sm"
+                aria-label=".form-select-sm example"
+                name="type_room_id"
+                id="listTypeRoom"
+              >
+                <option value="">------</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row mb-1">
+            <div class="col-md-5">
+              <label class="form-label">Diện tích</label>
+              <input
+                type="text"
+                class="form-control shadow-none form-control-sm"
+                id="area"
+                name="area"
+              />
+            </div>
+            <div class="col-md-5 offset-md-2">
+              <label class="form-label">Số người ở tối đa</label>
+              <input
+                type="text"
+                class="form-control shadow-none form-control-sm"
+                id="max_people"
+                name="max_people"
+              />
+            </div>
+          </div>
+          <div class="row mb-1">
+            <div class="col-md-5">
+              <label class="form-label">Giá tiền</label>
+              <input
+                type="text"
+                class="form-control shadow-none form-control-sm"
+                id="room_price"
+                name="room_price"
+              />
+            </div>
+            <div class="col-md-5 offset-md-2">
+              <label class="form-label">Vị trí tầng</label>
+              <input
+                type="text"
+                class="form-control shadow-none form-control-sm"
+                id="floor"
+                name="floor"
+              />
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-5">
+              <label class="form-label mt-2">Dịch vụ</label>
+              <div class="form-floating">
+                <textarea
+                  class="form-control shadow-none p-2"
+                  placeholder="Leave a comment here"
+                  id="service"
+                  name="service"
+                  style="height: 100px"
+                ></textarea>
+              </div>
+            </div>
+            <div class="col-5 offset-2">
+              <label class="form-label mt-2">Nội thất</label>
+              <div class="form-floating">
+                <textarea
+                  class="form-control shadow-none p-2"
+                  placeholder="Leave a comment here"
+                  id="furniture"
+                  name="furniture"
+                  style="height: 100px"
+                ></textarea>
+              </div>
+            </div>
+          </div>
+          <label class="form-label mt-2">Mô tả nhà trọ</label>
+          <div class="form-floating">
+            <textarea
+              class="form-control shadow-none p-2"
+              placeholder="Leave a comment here"
+              id="description"
+              name="description"
+              style="height: 100px"
+            ></textarea>
+          </div>
+          <div class="d-flex justify-content-around mt-4">
+            <button type="reset" class="btn btn-outline-danger" id="btn_reset">
+              Xóa bỏ
+            </button>
+            <button
+              type="button"
+              class="btn btn-outline-success"
+              id="btn_submit"
+            >
+              Hoàn tất
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js"
+      integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.min.js"
+      integrity="sha384-kjU+l4N0Yf4ZOJErLsIcvOU2qSb74wXpOhqTvwVx3OElZRweTnQ6d31fXEoRD1Jy"
+      crossorigin="anonymous"
+    ></script>
+    <%- include('./javas'); %>
+  </body>
+</html>

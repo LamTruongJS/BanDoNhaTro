@@ -1,0 +1,35 @@
+<%- include('./style'); %>
+<nav
+  class="w-75 container-form-step_three"
+  id="step_three"
+  style="background: #fff; box-shadow: 2px 2px 7px #ddd"
+>
+  <div class="alert alert-primary" role="alert">Bảng Thông tin ràng buộc</div>
+  <nav style="max-height: 30vh; overflow-y: auto">
+    <table class="table" id="tableRole">
+      <thead>
+        <tr>
+          <th scope="col">STT</th>
+          <th scope="col">Mã Loại Phòng Trọ</th>
+          <th scope="col">Tên Loại Phòng Trọ</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </nav>
+  <div class="alert alert-danger" role="alert">
+    <img
+      style="width: 30px; height: 30px; margin: 5px"
+      src="/images/warning.png"
+      alt="cảnh báo"
+    />Chú ý: Bạn cần cung cấp đúng mã phù thuộc theo loại phòng trọ để thuận
+    tiện nhất trong quá trình nhập liệu
+  </div>
+</nav>
+<link
+  href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css"
+  rel="stylesheet"
+  integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor"
+  crossorigin="anonymous"
+/>
+<%- include('./javas'); %>

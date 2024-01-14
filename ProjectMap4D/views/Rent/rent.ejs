@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/swiper/swiper-bundle.min.css"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+      crossorigin="anonymous"
+    />
+    <title>Phòng Đang Thuê</title>
+    <link rel="icon" type="image/x-icon" href="/images/logoMap.png" />
+    <%- include('./style'); %>
+  </head>
+  <body>
+    <div id="list__room">
+      <div class="header">
+        <a href="http://localhost:3000/map" class="icon__back">
+          <img src="/images/icon__back.png" alt="back" class="img__back" />
+        </a>
+        <div class="header__title">
+          <img src="/images/logoMap.png" alt="title" />
+        </div>
+      </div>
+      <div class="list__room__container m-0 p-0">
+        <div class="snake__bar">
+          <div class="snake__value"></div>
+        </div>
+        <div class="right__container">
+          <h1 class="list__room__container__title">
+            Danh sách phòng trọ đang thuê
+          </h1>
+          <div class="list__room__container__container" id="listRoom">
+            <h4 class="text-danger">Bạn chưa thuê phòng</h4>
+            <!-- <div class="list__room__item">
+              <a href="#">
+                <div class="list__room__item__info">
+                  <h3 class="list__room__item__info__title">
+                    Phòng 123 - Nhà trọ 5Bis
+                  </h3>
+                  <div class="list__room__item__info__config">
+                    <span class="config__price">Thời gian bắt đâu:</span>
+                    <span class="config__dot">·</span>
+                    <span class="config__area">Thời gian kết thúc:</span>
+                    <span class="config__dot">·</span>
+                    <span class="config__area"></span>
+                  </div>
+                  <span class="list__room__item__info__desc"
+                    >Thời gian thanh toán: ..... Giá tiền thanh toán:</span
+                  >
+                  <span class="list__room__item__info__location">Địa chỉ:</span>
+                </div>
+              </a>
+            </div> -->
+          </div>
+          <!-- <nav
+            aria-label="Page navigation example"
+            class="mt-5 d-flex justify-content-center"
+          >
+            <ul class="pagination">
+              <li class="page-item">
+                <a class="page-link" href="#" aria-label="Previous">
+                  <span aria-hidden="true">&laquo;</span>
+                </a>
+              </li>
+              <li class="page-item"><a class="page-link" href="#">1</a></li>
+              <li class="page-item"><a class="page-link" href="#">2</a></li>
+              <li class="page-item"><a class="page-link" href="#">3</a></li>
+              <li class="page-item">
+                <a class="page-link" href="#" aria-label="Next">
+                  <span aria-hidden="true">&raquo;</span>
+                </a>
+              </li>
+            </ul>
+          </nav> -->
+        </div>
+      </div>
+    </div>
+  </body>
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+    crossorigin="anonymous"
+  ></script>
+  <%- include('./javas.ejs'); %>
+  <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+</html>

@@ -1,0 +1,102 @@
+<script>
+  const container = document.querySelector(".container");
+  const btnSignUp = document.getElementById("btnSignUp");
+  const snackbar = document.querySelector(".snake__bar");
+  const form = document.getElementById("form__signUp");
+  const input = form.querySelectorAll("input");
+  container.classList.add("sign-up-mode");
+  const status = {
+    type: "register",
+  };
+  var valueForm = {
+    username: "",
+    email: "",
+    password: "",
+    numberPhone: "",
+    confirm__password: "",
+    role: "user",
+    pin: "",
+  };
+
+  for (let i = 0; i < input.length; i++) {
+    input[i].addEventListener("input", (e) => {
+      const name = e.target.name;
+      value = e.target.value;
+      valueForm = { ...valueForm, [name]: value };
+    });
+  }
+  function showSnakeBar(value, type) {
+    snackbar.classList.add(`showSnake__bar__${type}`);
+    snackbar.querySelector(".snake__value").innerHTML = value;
+    setTimeout(() => {
+      snackbar.classList.remove(`showSnake__bar__${type}`);
+    }, 2000);
+  }
+  function sendMail(data) {
+    let options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: JSON.stringify(data),
+    };
+    fetch("http://localhost:8888/sendmail", options)
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        // valueForm.pin = data.result;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+  function register(data) {
+    let options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: JSON.stringify(data),
+    };
+    fetch("http://localhost:8888/user/register", options)
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        if (data.result.error !== undefined) {
+          showSnakeBar(data.result.error, "error");
+        } else {
+          if (data.result.pin !== undefined) {
+            const pinContainer = document.getElementById("pinContainer");
+            pinContainer.classList.remove("none");
+            showSnakeBar(data.result.pin, "error");
+            if (status.type === "register") {
+              sendMail({ email: valueForm.email });
+            }
+            status.type = "sendmail";
+            if (status.type === "sendmail") {
+              for (let i = 0; i < input.length - 1; i++) {
+                input[i].setAttribute("disabled", "");
+              }
+            }
+          } else {
+            showSnakeBar("Đăng kí thành công", "success");
+            setTimeout(() => {
+              location.href = "http://localhost:3000/login";
+            }, 1000);
+          }
+        }
+      })
+      .catch((error) => console.log(error));
+  }
+  btnSignUp.addEventListener("click", (e) => {
+    if (valueForm.password !== valueForm.confirm__password) {
+      showSnakeBar("Mật khẩu không trùng khớp", "error");
+    } else {
+      register(valueForm);
+    }
+  });
+</script>

@@ -1,0 +1,64 @@
+<script>
+  let TOKEN = sessionStorage.getItem("TOKEN");
+  if (!TOKEN) {
+    location.href = "/login";
+  }
+  const role = JSON.parse(sessionStorage.getItem("role"));
+  if (role !== "landlord") {
+    location.href = "/not-found";
+  }
+  function SettingsMenu() {
+    const usernameContainer = document.getElementById("username");
+    const user_id = JSON.parse(sessionStorage.getItem("user_id"));
+    const username = document.querySelector(".user_name");
+    if (sessionStorage.getItem("TOKEN")) {
+      let options = {
+        method: "GET",
+        headers: {
+          Authorization:
+            "Bearer " + JSON.parse(sessionStorage.getItem("TOKEN")),
+          "Content-Type": "application/json",
+          // 'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      };
+
+      fetch(`http://localhost:8888/user/info/${user_id}`, options)
+        .then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          username.innerHTML = data.result[0].username;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  }
+  SettingsMenu();
+  window.onscroll = function () {
+    scrollFunction();
+  };
+
+  function scrollFunction() {
+    if (
+      document.body.scrollTop > 60 ||
+      document.documentElement.scrollTop > 60
+    ) {
+      document.getElementById("ownerMenu").classList.add("stickyMenu");
+    } else {
+      document.getElementById("ownerMenu").classList.remove("stickyMenu");
+    }
+  }
+  function logout() {
+    const btnLogout = document.getElementById("logout");
+    btnLogout.addEventListener("click", () => {
+      sessionStorage.removeItem("user_id");
+      sessionStorage.removeItem("TOKEN");
+      sessionStorage.removeItem("role");
+      setTimeout(() => {
+        location.href = "http://localhost:3000/login";
+      }, 1000);
+    });
+  }
+  logout();
+</script>

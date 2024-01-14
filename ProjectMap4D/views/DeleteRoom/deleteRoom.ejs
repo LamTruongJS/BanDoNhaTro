@@ -1,0 +1,98 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor"
+      crossorigin="anonymous"
+    />
+    <title>Chỉnh Sửa Phòng Trọ</title>
+    <link rel="icon" type="image/x-icon" href="/images/logoMap.png" />
+    <script
+      type="text/javascript"
+      src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"
+    ></script>
+  </head>
+  <%- include('./style'); %>
+  <body class="h-100 w-100">
+    <%- include('../MenuOwner/MenuOwner.ejs'); %>
+    <div class="snake__bar">
+      <div class="snake__value"></div>
+    </div>
+    <div
+      class="m-2 container-form"
+      style="display: flex; justify-content: center"
+    >
+      <div
+        class="w-75 border border-1"
+        style="background: #fff; box-shadow: 2px 2px 7px #ddd"
+      >
+        <p
+          class="text-center text-white text-uppercase p-2"
+          style="background-color: rgb(75, 77, 80)"
+        >
+          Xóa Phòng trọ
+        </p>
+        <div class="row">
+          <div class="p-2 col-4 offset-1">
+            <label for="exampleInputEmail1" class="form-label"
+              >Chọn nhà trọ bạn của bạn</label
+            >
+            <select
+              class="form-select shadow-none form-select-sm"
+              aria-label=".form-select-sm example"
+              name="motel_id"
+              id="listMotel"
+            >
+              <option value="" checked>------</option>
+            </select>
+          </div>
+          <div
+            class="col-4 offset-2"
+            style="
+              display: flex;
+              align-items: flex-end;
+              justify-content: flex-end;
+              padding-bottom: 10px;
+            "
+          >
+            <button
+              id="btn_delete_all"
+              type="button"
+              class="btn btn-outline-danger"
+            >
+              Xóa mục đã chọn
+            </button>
+          </div>
+        </div>
+        <form class="p-4 overflow-y-auto" id="form">
+          <table class="table">
+            <thead>
+              <tr class="text-center">
+                <th scope="col">Chọn</th>
+                <th scope="col">Tên Phòng Trọ</th>
+                <th scope="col">Trạng thái</th>
+                <th scope="col">Chức năng</th>
+              </tr>
+            </thead>
+            <tbody class="body_table"></tbody>
+          </table>
+        </form>
+      </div>
+    </div>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js"
+      integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.min.js"
+      integrity="sha384-kjU+l4N0Yf4ZOJErLsIcvOU2qSb74wXpOhqTvwVx3OElZRweTnQ6d31fXEoRD1Jy"
+      crossorigin="anonymous"
+    ></script>
+    <%- include('./javas'); %>
+  </body>
+</html>

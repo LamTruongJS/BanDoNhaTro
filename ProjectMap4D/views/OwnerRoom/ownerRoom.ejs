@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/swiper/swiper-bundle.min.css"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+      crossorigin="anonymous"
+    />
+    <title>Nhà Trọ</title>
+    <link rel="icon" type="image/x-icon" href="/images/logoMap.png" />
+    <%- include('./style'); %>
+  </head>
+  <body>
+    <template id="room_id"><%=room_id%></template>
+    <template id="motel_id"><%=motel_id%></template>
+    <div id="room w-100">
+      <%- include('../MenuOwner/MenuOwner.ejs'); %>
+      <div class="row body__container">
+        <div class="col-md-8 px-4 left__container">
+          <div class="room__slideShow">
+            <div class="swiper mySwiper2">
+              <div class="swiper-wrapper">
+                <div class="swiper-slide">
+                  <img
+                    src="https://maps.gstatic.com/tactile/pane/default_geocode-1x.png"
+                  />
+                </div>
+                <div class="swiper-slide">
+                  <img
+                    src="https://maps.gstatic.com/tactile/pane/default_geocode-1x.png"
+                  />
+                </div>
+                <div class="swiper-slide">
+                  <img
+                    src="https://maps.gstatic.com/tactile/pane/default_geocode-1x.png"
+                  />
+                </div>
+                <div class="swiper-slide">
+                  <img
+                    src="https://maps.gstatic.com/tactile/pane/default_geocode-1x.png"
+                  />
+                </div>
+                <div class="swiper-slide">
+                  <img
+                    src="https://maps.gstatic.com/tactile/pane/default_geocode-1x.png"
+                  />
+                </div>
+                <div class="swiper-slide">
+                  <img
+                    src="https://maps.gstatic.com/tactile/pane/default_geocode-1x.png"
+                  />
+                </div>
+                <div class="swiper-slide">
+                  <img
+                    src="https://maps.gstatic.com/tactile/pane/default_geocode-1x.png"
+                  />
+                </div>
+                <div class="swiper-slide">
+                  <img
+                    src="https://maps.gstatic.com/tactile/pane/default_geocode-1x.png"
+                  />
+                </div>
+                <div class="swiper-slide">
+                  <img
+                    src="https://maps.gstatic.com/tactile/pane/default_geocode-1x.png"
+                  />
+                </div>
+                <div class="swiper-slide">
+                  <img
+                    src="https://maps.gstatic.com/tactile/pane/default_geocode-1x.png"
+                  />
+                </div>
+              </div>
+            </div>
+            <div thumbsSlider="" class="swiper mySwiper">
+              <div class="swiper-wrapper">
+                <div class="swiper-slide">
+                  <img
+                    src="https://maps.gstatic.com/tactile/pane/default_geocode-1x.png"
+                  />
+                </div>
+                <div class="swiper-slide">
+                  <img
+                    src="https://maps.gstatic.com/tactile/pane/default_geocode-1x.png"
+                  />
+                </div>
+                <div class="swiper-slide">
+                  <img
+                    src="https://maps.gstatic.com/tactile/pane/default_geocode-1x.png"
+                  />
+                </div>
+                <div class="swiper-slide">
+                  <img
+                    src="https://maps.gstatic.com/tactile/pane/default_geocode-1x.png"
+                  />
+                </div>
+                <div class="swiper-slide">
+                  <img
+                    src="https://maps.gstatic.com/tactile/pane/default_geocode-1x.png"
+                  />
+                </div>
+                <div class="swiper-slide">
+                  <img
+                    src="https://maps.gstatic.com/tactile/pane/default_geocode-1x.png"
+                  />
+                </div>
+                <div class="swiper-slide">
+                  <img
+                    src="https://maps.gstatic.com/tactile/pane/default_geocode-1x.png"
+                  />
+                </div>
+                <div class="swiper-slide">
+                  <img
+                    src="https://maps.gstatic.com/tactile/pane/default_geocode-1x.png"
+                  />
+                </div>
+                <div class="swiper-slide">
+                  <img
+                    src="https://maps.gstatic.com/tactile/pane/default_geocode-1x.png"
+                  />
+                </div>
+                <div class="swiper-slide">
+                  <img
+                    src="https://maps.gstatic.com/tactile/pane/default_geocode-1x.png"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="motel__body" id="detailRoom">
+            <div class="motel__body__title">
+              <h1 class="motel__body__title__name">Tên Phòng trọ</h1>
+              <span class="motel__body__title__address"
+                >63/18, Đường Phú Xương, Phường Vĩnh Hải, Nha Trang, Khánh
+                Hòa</span
+              >
+              <div class="motel__body__title__price">1.000.000 / 1 tháng</div>
+            </div>
+            <hr />
+            <div class="motel__body__info">
+              <span class="motel__body__info__text">Thông tin mô tả</span>
+              <div class="motel__body__info__value">
+                Chính chủ cho thuê phòng trọ:
+
+                <span class="motel__body__info__value__text">
+                  - Địa chỉ: 63/18 đường Phú Xương - Vĩnh Hải - Nha Trang.</span
+                >
+
+                <span class="motel__body__info__value__text">
+                  - Diện tích : 12mz</span
+                >
+
+                <span class="motel__body__info__value__text">
+                  - Số người ở tối đa: 4</span
+                >
+
+                <span class="motel__body__info__value__text"
+                  >- Vị trí: tầng 2</span
+                >
+
+                <span class="motel__body__info__value__text"
+                  >- Hình thức thanh toán:</span
+                >
+
+                <span class="motel__body__info__value__text"
+                  >- Nội thất hiện có:</span
+                >
+
+                <span class="motel__body__info__value__text">
+                  - Mô tả: Lorem ipsum dolor sit amet, consectetur adipiscing
+                  elit, sed do eiusmod tempor incididunt ut labore et dolore
+                  magna aliqua. Ut enim ad minim veniam, quis nostrud
+                  exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                  consequat. Duis aute irure dolor in reprehenderit in voluptate
+                  velit esse cillum dolore eu fugiat nulla pariatur. Excepteur
+                  sint occaecat cupidatat non proident, sunt in culpa qui
+                  officia deserunt mollit anim id est laborum.</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="contact__container" id="info__owner">
+            <div class="contact__title"><span>Thông tin liên hệ</span></div>
+            <div class="contact__content">
+              <span class="contact__container__name"
+                >Tên chủ trọ:<span>Lê Lâm Trường</span>
+              </span>
+              <span class="contact__container__numberPhone"
+                >Số điện thoại:<span> 0905172802</span></span
+              >
+              <span class="contact__container__email"
+                >Email: <span>truongle.281000@gmail.com</span></span
+              >
+            </div>
+          </div>
+          <div class="room__list">
+            <div class="room__list__title">Danh sách phòng trọ</div>
+            <div class="room__list__body" id="room__list__container">
+              <div class="room__item">
+                <div class="room__item__img">
+                  <img
+                    src="https://maps.gstatic.com/tactile/pane/default_geocode-1x.png"
+                    alt="room image"
+                  />
+                </div>
+                <!-- <div class="room__item__container">
+                  <div class="rom__item__container__header">
+                    <div class="room__item__name">Phòng 11111</div>
+                    <span
+                      class="badge badge-pill badge-success room__item__status"
+                      >Success</span
+                    >
+                  </div>
+                  <div class="room__item__container__body">
+                    <p>Diện tích: 12mz</p>
+                    <p>Số người ở hiện tại 0/4</p>
+                    <p>Đơn giá: 1triệu</p>
+                  </div>
+                </div> -->
+              </div>
+            </div>
+            <div class="room__list__footer" id="btnMoreRoom">Xem thêm ...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js"
+    integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk"
+    crossorigin="anonymous"
+  ></script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.min.js"
+    integrity="sha384-kjU+l4N0Yf4ZOJErLsIcvOU2qSb74wXpOhqTvwVx3OElZRweTnQ6d31fXEoRD1Jy"
+    crossorigin="anonymous"
+  ></script>
+  <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+  <%- include('./javas.ejs'); %>
+</html>

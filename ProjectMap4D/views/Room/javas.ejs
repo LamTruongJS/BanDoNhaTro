@@ -1,0 +1,217 @@
+<script>
+  const TOKEN = sessionStorage.getItem("TOKEN");
+  if (!TOKEN) {
+    location.href = "/login";
+  }
+  const role = JSON.parse(sessionStorage.getItem("role"));
+  if (role != "customer") {
+    location.href = "/not-found";
+  }
+  var swiper = new Swiper(".mySwiper", {
+    loop: true,
+    spaceBetween: 10,
+    slidesPerView: 10,
+    freeMode: true,
+    watchSlidesProgress: true,
+  });
+  var swiper2 = new Swiper(".mySwiper2", {
+    loop: false,
+    spaceBetween: 10,
+    navigation: {
+      nextEl: ".swiper-button-next",
+      prevEl: ".swiper-button-prev",
+    },
+    thumbs: {
+      swiper: swiper,
+    },
+  });
+  const motel_id = document.getElementById("motel_id").innerHTML;
+  const room_id = document.getElementById("room_id").innerHTML;
+  const detailRoom = document.getElementById("detailRoom");
+  const infoOwner = document.getElementById("info__owner");
+  const roomListContainer = document.getElementById("room__list__container");
+  const btnMoreRoom = document.getElementById("btnMoreRoom");
+  btnMoreRoom.addEventListener("click", () => {
+    location.href = `http://localhost:3000/motel/${motel_id}/list`;
+  });
+  const getDetailRoom = () => {
+    let options = {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + JSON.parse(sessionStorage.getItem("TOKEN")),
+        "Content-Type": "application/json",
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    };
+
+    fetch(`http://localhost:8888/room/${room_id}`, options)
+      .then((response) => response.json())
+      .then((data) => {
+        const room = data.result;
+        const price = new Intl.NumberFormat("vi-VN", {
+          style: "currency",
+          currency: "VND",
+        }).format(room.room_price);
+        console.log(room);
+        detailRoom.innerHTML = ` <div class="motel__body__title">
+                                    <h1 class="motel__body__title__name">${room.room_name}</h1>
+                                    <span class="motel__body__title__address"
+                                      >${room.address}</span
+                                    >
+                                    <div class="motel__body__title__price">${price} / 1 tháng</div>
+                                  </div>
+                                  <hr />
+                                  <div class="motel__body__info">
+                                    <span class="motel__body__info__text">Thông tin mô tả</span>
+                                    <div class="motel__body__info__value">
+                                      Chính chủ cho thuê phòng trọ:
+
+                                      <span class="motel__body__info__value__text">
+                                        - Địa chỉ: ${room.address}.</span
+                                      >
+
+                                      <span class="motel__body__info__value__text">
+                                        - Diện tích : ${room.area} m<sup>2</sup></span
+                                      >
+
+                                      <span class="motel__body__info__value__text">
+                                        - Số người ở tối đa: ${room.max_people}</span
+                                      >
+
+                                      <span class="motel__body__info__value__text"
+                                        >- Vị trí: tầng ${room.floor}</span
+                                      >
+
+                                      <span class="motel__body__info__value__text"
+                                        >- Dịch vụ: ${room.service}</span
+                                      >
+
+                                      <span class="motel__body__info__value__text"
+                                        >- Nội thất hiện có:${room.furniture}</span
+                                      >
+
+                                      <span class="motel__body__info__value__text">
+                                        - Mô tả: ${room.description}.</span
+                                      >
+                                    </div>
+                                  </div>`;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const getOwner = () => {
+    let options = {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + JSON.parse(sessionStorage.getItem("TOKEN")),
+        "Content-Type": "application/json",
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    };
+
+    fetch(
+      `http://localhost:8888/motel/detail-by-id?motel_id=${motel_id}`,
+      options
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        const owner = data.result[0].user;
+        infoOwner.innerHTML = ` <div class="contact__title"><span>Thông tin liên hệ</span></div>
+                                <div class="contact__content">
+                                  <span class="contact__container__name"
+                                    >Tên chủ trọ:<span>${owner.username}</span>
+                                  </span>
+                                  <span class="contact__container__numberPhone"
+                                    >Số điện thoại:<span>${owner.numberPhone}</span></span
+                                  >
+                                  <span class="contact__container__email"
+                                    >Email:<span>${owner.email}</span></span
+                                  >
+                                </div>`;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  const getListRoom = () => {
+    let options = {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + JSON.parse(sessionStorage.getItem("TOKEN")),
+        "Content-Type": "application/json",
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    };
+
+    fetch(`http://localhost:8888/room/list?motel_id=${motel_id}`, options)
+      .then((response) => response.json())
+      .then((data) => {
+        const listRoom = data.result;
+        for (let i = 0; i < listRoom.length; i++) {
+          const room = listRoom[i];
+          const price = new Intl.NumberFormat("vi-VN", {
+            style: "currency",
+            currency: "VND",
+          }).format(room.room_price);
+          if (i === 0) {
+            roomListContainer.innerHTML = ` <div class="room__item">
+                                            <div class='d-none room_id'>${room.room_id}</div>
+                                            <div class="room__item__img">
+                                              <img src="https://maps.gstatic.com/tactile/pane/default_geocode-1x.png" alt="room image" />
+                                            </div>
+                                            <div class="room__item__container">
+                                              <div class="rom__item__container__header">
+                                                <div class="room__item__name">${room.room_name}</div>
+                                                <span
+                                                  class="badge badge-pill badge-success room__item__status"
+                                                  >${room.status}</span
+                                                >
+                                              </div>
+                                              <div class="room__item__container__body">
+                                                <p>Diện tích: ${room.area} m <sup>2</sup></p>
+                                                <p>Số người ở: ${room.max_people}</p>
+                                                <p>Giá: ${price}</p>
+                                              </div>
+                                            </div>
+                                          </div>`;
+          } else {
+            roomListContainer.innerHTML += ` <div class="room__item">
+                                             <div class='d-none room_id'>${room.room_id}</div>
+                                            <div class="room__item__img">
+                                              <img src="https://maps.gstatic.com/tactile/pane/default_geocode-1x.png" alt="room image" />
+                                            </div>
+                                            <div class="room__item__container">
+                                              <div class="rom__item__container__header">
+                                                <div class="room__item__name">${room.room_name}</div>
+                                                <span
+                                                  class="badge badge-pill badge-success room__item__status"
+                                                  >${room.status}</span
+                                                >
+                                              </div>
+                                              <div class="room__item__container__body">
+                                                <p>Diện tích: ${room.area} m <sup>2</sup></p>
+                                                <p>Số người ở: ${room.max_people}</p>
+                                                <p>Giá: ${price}</p>
+                                              </div>
+                                            </div>
+                                          </div>`;
+          }
+        }
+        const roomListItem = roomListContainer.querySelectorAll(".room__item");
+        roomListItem.forEach((item) => {
+          const room_item_id = item.querySelector(".room_id").innerHTML;
+          item.addEventListener("click", () => {
+            location.href = `http://localhost:3000/motel/${motel_id}/room/${room_item_id}`;
+          });
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  getDetailRoom();
+  getOwner();
+  getListRoom();
+</script>

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor"
+      crossorigin="anonymous"
+    />
+    <title>Thêm khách hàng</title>
+    <link rel="icon" type="image/x-icon" href="/images/logoMap.png" />
+    <script
+      type="text/javascript"
+      src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"
+    ></script>
+  </head>
+  <%- include('./style'); %>
+  <body class="h-100 w-100">
+    <%- include('../MenuOwner/MenuOwner.ejs'); %>
+    <div class="snake__bar">
+      <div class="snake__value"></div>
+    </div>
+    <div
+      class="m-2 container-form"
+      style="display: flex; justify-content: center"
+    >
+      <div
+        class="w-75 border border-1"
+        style="background: #fff; box-shadow: 2px 2px 7px #ddd"
+      >
+        <p
+          class="text-center text-white text-uppercase p-2"
+          style="background-color: rgb(75, 77, 80)"
+        >
+          Thêm khách hàng
+        </p>
+        <div class="row">
+          <div class="p-2 col-4 offset-1">
+            <label for="exampleInputEmail1" class="form-label"
+              >Chọn nhà trọ bạn của bạn</label
+            >
+            <select
+              class="form-select shadow-none form-select-sm"
+              aria-label=".form-select-sm example"
+              name="motel_id"
+              id="listMotel"
+            >
+              <option value="" checked>------</option>
+            </select>
+          </div>
+          <div class="p-2 col-4 offset-1" id="containerLisRoom">
+            <label for="exampleInputEmail1" class="form-label"
+              >Chọn phòng trọ bạn của bạn</label
+            >
+            <select
+              class="form-select shadow-none form-select-sm"
+              aria-label=".form-select-sm example"
+              name="room_id"
+              id="listRoom"
+            >
+              <option value="" checked>------</option>
+            </select>
+          </div>
+        </div>
+        <nav class="m-0 p-0" id="container_form">
+          <div
+            class="w-100 mt-4 d-flex justify-content-center align-items-end row p-0"
+          >
+            <div class="col col-7 offset-1 mb-3">
+              <label for="email" class="form-label"
+                >Nhập email người dùng</label
+              >
+              <input
+                type="email"
+                class="form-control form-control-sm"
+                id="email"
+                placeholder="name@example.com"
+              />
+            </div>
+            <button
+              type="button"
+              id="btn_add"
+              class="btn btn-sm btn-outline-dark mb-3 col col-3 offset-1"
+            >
+              Thêm khách hàng
+            </button>
+            <div id="myModal" class="modal">
+              <div class="modal-content">
+                <p
+                  class="text-center text-white text-uppercase p-2"
+                  style="background-color: rgb(75, 77, 80)"
+                >
+                  Thêm khách hàng
+                </p>
+                <div class="row">
+                  <div class="p-2 col-4 offset-1">
+                    <label for="date_start" class="form-label"
+                      >Ngày bắt đầu</label
+                    >
+                    <input
+                      type="date"
+                      class="form-control form-control-sm"
+                      name="date_start"
+                      id="date_start"
+                    />
+                  </div>
+                  <div class="p-2 col-4 offset-1">
+                    <label for="date_end" class="form-label"
+                      >Ngày kết thúc</label
+                    >
+                    <input
+                      type="date"
+                      class="form-control form-control-sm"
+                      name="date_end"
+                      id="date_end"
+                    />
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="p-2 col-4 offset-1">
+                    <label for="time_payment" class="form-label"
+                      >Thời gian thanh toán</label
+                    >
+                    <input
+                      type="date"
+                      class="form-control form-control-sm"
+                      name="time_payment"
+                      id="time_payment"
+                    />
+                  </div>
+                  <div class="p-2 col-4 offset-1">
+                    <label for="price" class="form-label"
+                      >Sô tiền thanh toán</label
+                    >
+                    <input
+                      type="number"
+                      class="form-control form-control-sm"
+                      placeholder="VND"
+                      name="price"
+                      id="price"
+                    />
+                  </div>
+                </div>
+                <div class="row mb-3 mt-3">
+                  <div class="p-2 col-4 offset-1 text-center">
+                    <button
+                      type="button"
+                      class="btn btn-danger btn-sm"
+                      id="btn_cancel"
+                    >
+                      Đóng
+                    </button>
+                  </div>
+                  <div class="p-2 col-4 offset-1 text-center">
+                    <button
+                      type="button"
+                      class="btn btn-outline-success btn-sm"
+                      id="btn_submit"
+                    >
+                      Thêm
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="w-100">
+            <p
+              class="text-center text-white text-uppercase p-2"
+              style="background-color: rgb(75, 77, 80)"
+            >
+              Thông tin khách hàng
+            </p>
+            <div
+              class="p-4"
+              id="result_customer"
+              style="background-color: rgb(229, 234, 241)"
+            >
+              <!-- <div
+                class="bg-light p-3"
+                style="box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px"
+              >
+                <p>Email: truongle.281000@gmail.com</p>
+                <p>Tên: Lâm Trường</p>
+                <p>Số điện thoại: 0905172802</p>
+              </div> -->
+            </div>
+          </div>
+        </nav>
+      </div>
+    </div>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js"
+      integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.min.js"
+      integrity="sha384-kjU+l4N0Yf4ZOJErLsIcvOU2qSb74wXpOhqTvwVx3OElZRweTnQ6d31fXEoRD1Jy"
+      crossorigin="anonymous"
+    ></script>
+    <%- include('./javas'); %>
+  </body>
+</html>

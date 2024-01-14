@@ -1,0 +1,329 @@
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+  }
+
+  #motel {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+  }
+  #motel > .header {
+    margin: 0;
+    margin-bottom: 20px;
+    height: 44px;
+    width: 100%;
+    padding: 10px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  }
+  #motel > .header > .icon__back {
+    display: flex;
+    align-items: center;
+    padding: 3px;
+  }
+  #motel > .header > .icon__back:hover {
+    cursor: pointer;
+    background-color: rgb(232, 230, 230);
+  }
+  #motel > .header > .icon__back > .img__back {
+    background-color: transparent;
+    width: 20px;
+    height: 20px;
+  }
+  #motel > .header > .header__title {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+  }
+  .motel__slideShow {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 400px;
+    min-width: 100%;
+  }
+  .body__container {
+    width: 90%;
+  }
+  .swiper {
+    width: 100%;
+    height: 60%;
+  }
+
+  .swiper-slide {
+    text-align: center;
+    font-size: 18px;
+    background: #fff;
+
+    /* Center slide text vertically */
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    -webkit-justify-content: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    -webkit-align-items: center;
+    align-items: center;
+  }
+
+  .swiper-slide img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .swiper {
+    width: 100%;
+    height: 300px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .swiper-slide {
+    background-size: cover;
+    background-position: center;
+  }
+
+  .mySwiper2 {
+    width: 100% !important;
+  }
+
+  .mySwiper {
+    height: 5%;
+    box-sizing: border-box;
+    padding: 10px 0;
+  }
+
+  .mySwiper .swiper-slide {
+    width: 25%;
+    max-width: 112px;
+    height: 20%;
+    opacity: 0.4;
+  }
+  .mySwiper .swiper-slide-thumb-active {
+    opacity: 1;
+  }
+  .swiper-slide img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 4px;
+  }
+  .motel__body {
+    width: 400px;
+    min-width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  .motel__body__title {
+    width: 100%;
+    padding: 15px 0;
+    border-bottom: 1px solid #f2f2f2;
+  }
+  .motel__body__title__name {
+    font-family: "Nunito Bold" !important;
+    font-size: 24px;
+    line-height: 32px;
+    font-weight: bold !important;
+    color: #2c2c2c;
+    display: block;
+  }
+  .motel__body__title__address {
+    font-family: "Roboto Regular" !important;
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: normal !important;
+    color: #2c2c2c;
+    display: block;
+    margin-top: 8px;
+  }
+  .motel__body__info {
+    padding-top: 15px;
+  }
+  .motel__body__info__text {
+    margin-bottom: 16px;
+    font-family: "Nunito Bold" !important;
+    font-size: 18px;
+    line-height: 28px;
+    font-weight: bold !important;
+    color: #2c2c2c;
+    display: block;
+    vertical-align: baseline;
+    border: none;
+  }
+  .motel__body__info__value {
+    font-family: "Roboto Regular" !important;
+    font-size: 16px;
+    line-height: 25px;
+    font-weight: normal !important;
+    vertical-align: baseline;
+    border: none;
+  }
+  .motel__body__info__value__numberPhone {
+    color: #2c2c2c;
+    background-color: #f2f2f2;
+    border-radius: 4px;
+    height: 24px !important;
+    line-height: 24px !important;
+    border: none !important;
+    box-sizing: content-box !important;
+    padding: 4px 4px 4px 6px;
+    margin-bottom: 2px;
+    font-family: "Roboto Regular" !important;
+    font-size: 14px;
+    font-weight: normal !important;
+  }
+  .motel__body__info__value__email {
+    color: #007c80;
+    text-decoration: none;
+  }
+  .left__container {
+    border-right: 1px solid #bbbcbc;
+  }
+  .room__list {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+    box-sizing: border-box;
+  }
+  .room__list__title {
+    width: 100%;
+    text-align: center;
+    background-color: #ffff;
+    padding: 10px;
+    font-size: 18px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  }
+  .room__list__body {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    height: 400px;
+  }
+  .room__item {
+    display: flex;
+
+    padding: 10px;
+  }
+  .room__item:hover {
+    cursor: pointer;
+    background-color: #f2f2f2;
+  }
+  .room__item__img {
+    width: 70px;
+    height: 70px;
+  }
+  .room__item__img > img {
+    width: 70px;
+    height: 70px;
+  }
+  .room__item__container {
+    flex: 1 1 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 0 10px;
+  }
+  .rom__item__container__header {
+    display: flex;
+    justify-content: space-between;
+  }
+  .room__item__name {
+  }
+  .room__item__status {
+    color: #fff;
+    font-size: 11px;
+    border: 1px solid #007c80;
+    background-color: #007c80;
+    border-radius: 10px;
+  }
+  .room__item__status__full {
+    color: #fff;
+    font-size: 11px;
+    border: 1px solid #dd0b0b;
+    background-color: #dd0b0b;
+    border-radius: 10px;
+  }
+  .room__item__container__body {
+    font-size: 11px;
+    color: rgb(150, 147, 147);
+    display: flex;
+    justify-content: space-between;
+  }
+  .room__list__footer {
+    width: 100%;
+    padding: 5px;
+    text-align: center;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  }
+  .room__list__footer:hover {
+    cursor: pointer;
+    color: turquoise;
+  }
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #888;
+  }
+
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+  .motel__map {
+    margin-top: 10px;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+  #map2 {
+    width: 100%;
+    height: 100%;
+  }
+  #map2:hover {
+    cursor: pointer;
+  }
+  .motel__map__text {
+    position: absolute;
+    top: 0;
+    padding: 5px;
+    width: fit-content;
+    background-color: #007c807b;
+    border-bottom: none;
+    color: #fff;
+    cursor: pointer;
+  }
+  .motel__map__text:hover {
+    background-color: #08a0a5;
+
+    border-bottom: none;
+  }
+</style>

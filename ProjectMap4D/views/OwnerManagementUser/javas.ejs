@@ -1,0 +1,324 @@
+<script>
+  let RoomCurrent = "";
+  const snakeBar = document.querySelector(".snake__bar");
+  const setSnakeBar = (value, type) => {
+    snakeBar.classList.add(`showSnake__bar__${type}`);
+    snakeBar.querySelector(".snake__value").innerHTML = value;
+    setTimeout(() => {
+      snakeBar.classList.remove(`showSnake__bar__${type}`);
+    }, 1000);
+  };
+  const getListMotel = () => {
+    const user_id = JSON.parse(sessionStorage.getItem("user_id"));
+    let conditions = {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + JSON.parse(sessionStorage.getItem("TOKEN")),
+        "Content-Type": "application/json",
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    };
+
+    fetch(`http://localhost:8888/motel/list/${user_id}`, conditions)
+      .then((response) => response.json())
+      .then((data) => {
+        const listRoom = data.result;
+        const listOption = document.getElementById("listMotel");
+        listRoom.map((item, index) => {
+          listOption.innerHTML += `<option value="${item.motel_id}">${item.motel_name}</option>`;
+        });
+      })
+      .catch((error) => console.log(error));
+  };
+  const formInfoUser = document.getElementById("form_info_user");
+  const formListUser = document.getElementById("form_list_user");
+  let listDataRoomRent = [];
+  const listMotel = document.getElementById("listMotel");
+  const listRoom = document.getElementById("listRoom");
+  document.getElementById("containerListRoom").classList.add("none");
+  formListUser.classList.add("none");
+  formInfoUser.classList.add("none");
+  listMotel.addEventListener("change", (e) => {
+    const value = e.target.value;
+    const name = e.target.name;
+    // formValue = { ...formValue, [name]: value, room_id: "" };
+
+    if (value === "") {
+      document.getElementById("containerListRoom").classList.add("none");
+      formListUser.classList.add("none");
+      formInfoUser.classList.add("none");
+    } else {
+      // getDetailMotel();
+      formListUser.classList.add("none");
+      formInfoUser.classList.add("none");
+      document.getElementById("containerListRoom").classList.remove("none");
+      getListRoom(value);
+    }
+  });
+  function getListRoom(motel_id) {
+    let conditions = {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + JSON.parse(sessionStorage.getItem("TOKEN")),
+        "Content-Type": "application/json",
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    };
+
+    fetch(`http://localhost:8888/room/list?motel_id=${motel_id}`, conditions)
+      .then((response) => response.json())
+      .then((data) => {
+        const listRoom = data.result;
+        listDataRoomRent = [];
+        const listOption = document.getElementById("listRoom");
+        listOption.innerHTML = `<option value="" checked>------</option>`;
+        if (listRoom.length > 0) {
+          listOption.innerHTML += `<option value="all" checked>Tất cả</option>`;
+        }
+        listRoom.map((item, index) => {
+          listDataRoomRent.push(item.room_id);
+          listOption.innerHTML += `<option value="${item.room_id}">${item.room_name}</option>`;
+        });
+      })
+      .catch((error) => console.log(error));
+  }
+  listRoom.addEventListener("change", (e) => {
+    formInfoUser.classList.add("none");
+    const value = e.target.value;
+    RoomCurrent = value;
+    const name = e.target.name;
+    // formValue = { ...formValue, [name]: value, room_id: "" };
+    if (value === "") {
+      formListUser.classList.add("none");
+      formInfoUser.classList.add("none");
+    } else {
+      formListUser.classList.remove("none");
+      if (value === "all") {
+        getListALLRoomRent(listDataRoomRent);
+      } else {
+        getListRoomRent(value);
+      }
+    }
+
+    function getListALLRoomRent(listDataRoomRent) {
+      let options = {
+        method: "GET",
+        headers: {
+          Authorization:
+            "Bearer " + JSON.parse(sessionStorage.getItem("TOKEN")),
+          "Content-Type": "application/json",
+          // 'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      };
+      fetch(`http://localhost:8888/rent/list`, options)
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(listDataRoomRent);
+          const listRent = data.result.filter((item) => {
+            return listDataRoomRent.includes(item.room_id);
+          });
+          console.log(listRent);
+          const arrayUser = [];
+          const userListContainer = document.getElementById(
+            "user_list_container"
+          );
+          userListContainer.innerHTML = "";
+          listRent.forEach((item, index) => {
+            const user_id = item.user_id;
+            fetch(`http://localhost:8888/user/info/${user_id}`, options)
+              .then((response) => response.json())
+              .then((dataUser) => {
+                const username = dataUser.result[0].username;
+                arrayUser.push(dataUser.result[0]);
+                if (index === 0) {
+                  userListContainer.innerHTML = `<div class="item_user">
+                      <span>${username}</span>
+                      <svg class="btn_info_user MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-vubbuv" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="CommentIcon"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18zM18 14H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"></path></svg>
+                    </div>`;
+                } else {
+                  userListContainer.innerHTML += `<div class="item_user">
+                      <span>${username}</span>
+                      <svg  class="btn_info_user MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-vubbuv" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="CommentIcon"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18zM18 14H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"></path></svg>
+                    </div>`;
+                }
+
+                document
+                  .querySelectorAll(".btn_info_user")
+                  .forEach((button, idItem) => {
+                    button.addEventListener("click", () => {
+                      onClickInfoRent(listRent[idItem], arrayUser[idItem]);
+                    });
+                  });
+              })
+              .catch((error) => console.log(error));
+          });
+        })
+        .catch((error) => console.log(error));
+    }
+
+    function getListRoomRent(room_id) {
+      let options = {
+        method: "GET",
+        headers: {
+          Authorization:
+            "Bearer " + JSON.parse(sessionStorage.getItem("TOKEN")),
+          "Content-Type": "application/json",
+          // 'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      };
+      fetch(`http://localhost:8888/rent/room/${room_id}`, options)
+        .then((response) => response.json())
+        .then((data) => {
+          const userRentList = data.result;
+          const userListContainer = document.getElementById(
+            "user_list_container"
+          );
+          const arrayUser = [];
+          userRentList.forEach((item, index) => {
+            const user_id = item.user_id;
+            fetch(`http://localhost:8888/user/info/${user_id}`, options)
+              .then((response) => response.json())
+              .then((dataUser) => {
+                const username = dataUser.result[0].username;
+                arrayUser.push(dataUser.result[0]);
+                if (index === 0) {
+                  userListContainer.innerHTML = `<div class="item_user">
+                      <span>${username}</span>
+                      <svg class="btn_info_user MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-vubbuv" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="CommentIcon"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18zM18 14H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"></path></svg>
+                    </div>`;
+                } else {
+                  userListContainer.innerHTML += `<div class="item_user">
+                      <span>${username}</span>
+                      <svg  class="btn_info_user MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-vubbuv" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="CommentIcon"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18zM18 14H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"></path></svg>
+                    </div>`;
+                }
+
+                document
+                  .querySelectorAll(".btn_info_user")
+                  .forEach((button, idItem) => {
+                    button.addEventListener("click", () => {
+                      onClickInfoRent(userRentList[idItem], arrayUser[idItem]);
+                    });
+                  });
+              })
+              .catch((error) => console.log(error));
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+    function onClickInfoRent(item, user) {
+      formInfoUser.classList.remove("none");
+
+      let options = {
+        method: "GET",
+        headers: {
+          Authorization:
+            "Bearer " + JSON.parse(sessionStorage.getItem("TOKEN")),
+          "Content-Type": "application/json",
+          // 'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      };
+      fetch(`http://localhost:8888/room/${item.room_id}`, options)
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          const motelName = data.result.motel_name;
+          const roomName = data.result.room_name;
+          const room_id = data.result.room_id;
+          const price = new Intl.NumberFormat("vi-VN", {
+            style: "currency",
+            currency: "VND",
+          }).format(item.price);
+          console.log(item);
+          const timeStart = new Date(item.date_start);
+          const timeStartCurrent = `${timeStart.getFullYear()}-${(
+            timeStart.getMonth() + 1
+          )
+            .toString()
+            .padStart(2, 0)}-${timeStart.getDate().toString().padStart(2, 0)}`;
+          const timeEnd = new Date(item.date_end);
+          const timeEndCurrent = `${timeEnd.getFullYear()}-${(
+            timeEnd.getMonth() + 1
+          )
+            .toString()
+            .padStart(2, 0)}-${timeEnd.getDate().toString().padStart(2, 0)}`;
+          const timePayment = new Date(item.time_payment);
+          const timePaymentCurrent = `${timePayment.getFullYear()}-${(
+            timePayment.getMonth() + 1
+          )
+            .toString()
+            .padStart(2, 0)}-${timePayment
+            .getDate()
+            .toString()
+            .padStart(2, 0)}`;
+
+          formInfoUser.innerHTML = `
+                <button type='button' id='${user.user_id}+${room_id}' class='btn_delete_rent btn btn-sm btn-outline-danger' style='position: absolute; top:10px; right:10px'>Xóa</button>
+               <div class="w-100 card_info_item">
+                  <div class="card_info_item_title">Thông Tin Khách Hàng</div>
+                  <span class="w-50"><span class="p-1" style="color: #4CAF50">Tên khách hàng:</span> ${user.username}</span>
+                  <span class="w-50"><span class="p-1" style="color: #4CAF50">Số điện thoại:</span> ${user.numberPhone}</span>
+                </div>
+                <div class="w-100 card_info_item">
+                  <div class="card_info_item_title">Thông Tin Trọ</div>
+                  <span class="w-50"><span class="p-1" style="color: #4CAF50">Tên nhà trọ:</span> ${motelName}</span>
+                  <span class="w-50"><span class="p-1" style="color: #4CAF50">Tên Phòng trọ:</span> ${roomName}</span>
+                </div>
+                <div class="w-100 card_info_item">
+                  <div class="card_info_item_title">Thời gian Thuê Phòng</div>
+                  <span class="w-50"><span class="p-1" style="color: #4CAF50">Bắt đầu:</span> ${timeStartCurrent}</span>
+                  <span class="w-50"><span class="p-1" style="color: #4CAF50">Kết thúc (dự kiến):</span> ${timeEndCurrent}</span>
+                </div>
+                <div class="w-100 card_info_item">
+                  <div class="card_info_item_title">Thời gian thanh toán</div>
+                  <span class="w-50"><span class="p-1" style="color: #4CAF50">Thời gian:</span> ${timePaymentCurrent}</span>
+                  <span class="w-50"><span class="p-1" style="color: #4CAF50">Số tiền:</span> ${price}</span>
+                </div>`;
+        })
+        .then(() => {
+          setTimeout(() => {
+            const btnDelete = document.querySelector(".btn_delete_rent");
+            const value = btnDelete.getAttribute("id");
+            const [user_id, room_id] = value.split("+");
+
+            btnDelete.addEventListener("click", () => {
+              deleteRent(user_id, room_id);
+            });
+          }, 500);
+        })
+        .catch((error) => console.log(error));
+    }
+
+    function deleteRent(user_id, room_id) {
+      const data = {
+        user_id: user_id,
+        room_id: room_id,
+      };
+      let options = {
+        method: "DELETE",
+        headers: {
+          Authorization:
+            "Bearer " + JSON.parse(sessionStorage.getItem("TOKEN")),
+          "Content-Type": "application/json",
+          // 'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: JSON.stringify(data),
+      };
+      fetch(`http://localhost:8888/rent/delete`, options)
+        .then((response) => response.json())
+        .then((data) => {
+          setSnakeBar("Xóa thành công", "success");
+          setTimeout(() => {
+            location.href = `http://localhost:3000/owner/management/tenants`;
+          }, 500);
+        })
+        .catch((error) => {
+          setSnakeBar("Xóa thất bại", "error");
+          console.log(error);
+        });
+    }
+  });
+  getListMotel();
+</script>

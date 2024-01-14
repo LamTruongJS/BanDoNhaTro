@@ -1,0 +1,645 @@
+<script>
+  const STEP_ONE = document.getElementById("step_one");
+  const STEP_TWO = document.getElementById("step_two");
+  const STEP_THREE = document.getElementById("step_three");
+  const STEP_FOUR = document.getElementById("step_four");
+  const STEP_FIVE = document.getElementById("step_five");
+  const STEP_SIX = document.getElementById("step_six");
+
+  const btn_next = document.getElementById("btn_next");
+  const btn_back = document.getElementById("btn_back");
+  let listTypeRoom = [];
+  let ContainColTable = 0;
+  function getListTypeRoom() {
+    let conditions = {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + JSON.parse(sessionStorage.getItem("TOKEN")),
+        "Content-Type": "application/json",
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    };
+
+    fetch(`http://localhost:8888/room/list/type`, conditions)
+      .then((response) => response.json())
+      .then((data) => {
+        listTypeRoom = [...data.result];
+      })
+      .catch((error) => {
+        return error;
+      });
+  }
+  getListTypeRoom();
+  let formValueStepOne = {
+    motel_id: "",
+  };
+  let dataRoomStepFive = [];
+  STEP_TWO.classList.add("none");
+  STEP_THREE.classList.add("none");
+  STEP_FOUR.classList.add("none");
+  STEP_FIVE.classList.add("none");
+  STEP_SIX.classList.add("none");
+
+  const listMode = [
+    {
+      type: "STEP_ONE",
+      element: STEP_ONE,
+    },
+    {
+      type: "STEP_TWO",
+      element: STEP_TWO,
+    },
+    {
+      type: "STEP_THREE",
+      element: STEP_THREE,
+    },
+    {
+      type: "STEP_FOUR",
+      element: STEP_FOUR,
+    },
+    {
+      type: "STEP_FIVE",
+      element: STEP_FIVE,
+    },
+    {
+      type: "STEP_SIX",
+      element: STEP_SIX,
+    },
+  ];
+  let modeCurrent = listMode[0].type;
+  if (modeCurrent == listMode[0].type) {
+    btn_next.classList.add("none");
+    btn_back.classList.add("none");
+  } else {
+    btn_next.classList.remove("none");
+    btn_back.classList.remove("none");
+  }
+
+  // setInterval(() => {
+  //   if (modeCurrent == listMode[0].type) {
+  //     btn_next.classList.add("none");
+  //     btn_back.classList.add("none");
+  //   } else {
+  //     btn_next.classList.remove("none");
+  //     btn_back.classList.remove("none");
+  //   }
+  // }, 1000);
+  if (modeCurrent == listMode[0].type) {
+    btn_next.classList.add("none");
+    btn_back.classList.add("none");
+  }
+  btn_next.addEventListener("click", () => {
+    switch (modeCurrent) {
+      case listMode[0].type: {
+        //Bước 1
+        modeCurrent = listMode[1].type;
+        listMode[0].element.classList.add("none");
+        listMode[1].element.classList.remove("none");
+        checkModeCurrent();
+        break;
+      }
+      case listMode[1].type: {
+        //Bước 2
+        modeCurrent = listMode[2].type;
+        listMode[1].element.classList.add("none");
+        listMode[2].element.classList.remove("none");
+        checkModeCurrent();
+        break;
+      }
+      case listMode[2].type: {
+        //Bước 3
+        modeCurrent = listMode[3].type;
+        listMode[2].element.classList.add("none");
+        listMode[3].element.classList.remove("none");
+        checkModeCurrent();
+        break;
+      }
+      case listMode[3].type: {
+        //Bước 4
+        modeCurrent = listMode[4].type;
+        listMode[3].element.classList.add("none");
+        listMode[4].element.classList.remove("none");
+        checkModeCurrent();
+        break;
+      }
+      case listMode[4].type: {
+        //Bước 5
+
+        modeCurrent = listMode[5].type;
+        listMode[4].element.classList.add("none");
+        listMode[5].element.classList.remove("none");
+        checkModeCurrent();
+        break;
+      }
+    }
+  });
+
+  btn_back.addEventListener("click", () => {
+    switch (modeCurrent) {
+      case listMode[1].type: {
+        // Bước 1 quay lại là bước 0
+        modeCurrent = listMode[0].type;
+        listMode[1].element.classList.add("none");
+        listMode[0].element.classList.remove("none");
+        btn_next.classList.add("none");
+        btn_back.classList.add("none");
+        checkModeCurrent();
+        break;
+      }
+      case listMode[2].type: {
+        modeCurrent = listMode[1].type;
+
+        listMode[2].element.classList.add("none");
+        listMode[1].element.classList.remove("none");
+        btn_next.classList.remove("none");
+        btn_back.classList.remove("none");
+        checkModeCurrent();
+        break;
+      }
+      case listMode[3].type: {
+        modeCurrent = listMode[2].type;
+        listMode[3].element.classList.add("none");
+        listMode[2].element.classList.remove("none");
+        btn_next.classList.remove("none");
+        btn_back.classList.remove("none");
+        checkModeCurrent();
+        break;
+      }
+      case listMode[4].type: {
+        modeCurrent = listMode[3].type;
+        listMode[4].element.classList.add("none");
+        listMode[3].element.classList.remove("none");
+        btn_next.classList.remove("none");
+        btn_back.classList.remove("none");
+        checkModeCurrent();
+        break;
+      }
+      case listMode[5].type: {
+        modeCurrent = listMode[4].type;
+        listMode[5].element.classList.add("none");
+        listMode[4].element.classList.remove("none");
+        btn_next.classList.remove("none");
+        btn_back.classList.remove("none");
+        checkModeCurrent();
+        break;
+      }
+    }
+  });
+
+  setInterval(() => {
+    const listMenu = document
+      .getElementById("breadcrumb")
+      .querySelectorAll("li");
+    listMenu.forEach((item, index) => {
+      const valueIndex = listMode.findIndex(
+        (modeItem) => modeItem.type === modeCurrent
+      );
+      if (index === valueIndex) {
+        item.classList.add("activeItem");
+      } else {
+        item.classList.remove("activeItem");
+      }
+    });
+  }, 500);
+
+  function StepOne() {
+    const snakeBar = document.querySelector(".snake__bar");
+    const setSnakeBar = (value, type) => {
+      snakeBar.classList.add(`showSnake__bar__${type}`);
+      snakeBar.querySelector(".snake__value").innerHTML = value;
+      setTimeout(() => {
+        snakeBar.classList.remove(`showSnake__bar__${type}`);
+      }, 1000);
+    };
+    const motel_id_url = document.getElementById("motel_id_form_url").innerHTML;
+    const btn_reset = document.getElementById("btn_reset");
+    const btn_submit = document.getElementById("btn_submit");
+    const listSelect = document.querySelectorAll("select");
+    formValueStepOne = {
+      motel_id: motel_id_url,
+    };
+    btn_reset.addEventListener("click", () => {
+      location.href = `http://localhost:3000/admin/manager/motel/${motel_id_url}`;
+    });
+
+    listSelect.forEach((item) => {
+      item.addEventListener("change", (e) => {
+        const name = e.target.name;
+        const value = e.target.value;
+        formValueStepOne = {
+          ...formValueStepOne,
+          [name]: value,
+        };
+      });
+    });
+
+    const getListMotel = () => {
+      const user_id = JSON.parse(sessionStorage.getItem("user_id"));
+      let conditions = {
+        method: "GET",
+        headers: {
+          Authorization:
+            "Bearer " + JSON.parse(sessionStorage.getItem("TOKEN")),
+          "Content-Type": "application/json",
+          // 'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      };
+
+      fetch(
+        `http://localhost:8888/motel/detail-by-id?motel_id=${motel_id_url}`,
+        conditions
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          const listRoom = data.result;
+
+          const listOption = document.getElementById("motel_id");
+          listRoom.map((item, index) => {
+            listOption.innerHTML = `<option value="${motel_id_url} checked">${item.motel_name}</option>`;
+          });
+        })
+        .catch((error) => console.log(error));
+    };
+
+    btn_submit.addEventListener("click", () => {
+      let isComplete = true;
+      const arrayNull = Object.values(formValueStepOne).filter(
+        (item) => item.trim() === ""
+      );
+      if (arrayNull.length > 0) {
+        isComplete = false;
+        setSnakeBar("Giá trị không được bỏ trống", "error");
+      }
+      if (isComplete) {
+        modeCurrent = listMode[1].type;
+        checkModeCurrent();
+        listMode[0].element.classList.add("none");
+        listMode[1].element.classList.remove("none");
+        btn_next.classList.remove("none");
+        btn_back.classList.remove("none");
+      }
+    });
+
+    getListMotel();
+  }
+
+  function StepTwo() {
+    /* Get the HTML data using Element by Id */
+    let table = document.getElementById("tblStocks");
+
+    /* Declaring array variable */
+    let rows = [];
+
+    const title = table.querySelectorAll("th");
+    ContainColTable = title.length;
+    const data = table.querySelectorAll("td");
+    for (let i = 0; i < title.length; i++) {
+      rows.push(title[i].innerText);
+    }
+
+    csvContent = "data:text/csv;charset=utf-8,";
+    /* add the column delimiter as comma(,) and each row splitted by new line character (\n) */
+    rows.forEach((rowArray, index) => {
+      if (index === rows.length - 1) {
+        csvContent += rowArray + "\r\n";
+      } else {
+        csvContent += rowArray + ",";
+      }
+    });
+
+    function exportData() {
+      /* create a hidden <a> DOM node and set its download attribute */
+      let encodedUri = encodeURI(csvContent);
+      let link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "role_import.csv");
+      document.body.appendChild(link);
+      /* download the data file named "Stock_Price_Report.csv" */
+      link.click();
+    }
+
+    document
+      .getElementById("btn__download__file")
+      .addEventListener("click", () => {
+        exportData();
+      });
+  }
+
+  function StepThree() {
+    const tableRole = document.getElementById("tableRole");
+    tBody = tableRole.querySelector("tbody");
+    listTypeRoom.map((item, index) => {
+      if (index === 0) {
+        tBody.innerHTML = `<tr>
+                                  <th scope="row">${index + 1}</th>
+                                  <td>${item.type_room_id}</td>
+                                  <td>${item.type_room_name}</td>
+                                </tr>`;
+      } else {
+        tBody.innerHTML += `<tr>
+                                  <th scope="row">${index + 1}</th>
+                                  <td>${item.type_room_id}</td>
+                                  <td>${item.type_room_name}</td>
+                                </tr>`;
+      }
+    });
+  }
+
+  function StepFour() {
+    const excel_file = document.getElementById("excel_file");
+    btn_next.classList.add("none");
+    excel_file.addEventListener("change", (event) => {
+      if (
+        ![
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          "application/vnd.ms-excel",
+          "text/csv",
+        ].includes(event.target.files[0].type)
+      ) {
+        document.getElementById("excel_data_step_four").innerHTML =
+          '<div class="alert alert-danger"><img style="width: 30px; height: 30px; margin: 2px" src="/images/warning.png" alt="cảnh báo"/>Chỉ cho phép thêm vào file CSV</div>';
+        excel_file.value = "";
+        return false;
+      }
+      var reader = new FileReader();
+      reader.readAsArrayBuffer(event.target.files[0]);
+      reader.onload = function (event) {
+        var data = new Uint8Array(reader.result);
+        var work_book = XLSX.read(data, { type: "array" });
+        var sheet_name = work_book.SheetNames;
+        var sheet_data = XLSX.utils.sheet_to_json(
+          work_book.Sheets[sheet_name[0]],
+          { header: 1, defval: "" }
+        );
+        if (sheet_data.length > 1) {
+          btn_next.classList.remove("none");
+        }
+        if (sheet_data.length > 0) {
+          var table_output = '<table class="table table-bordered"><thead>';
+
+          for (var row = 0; row < 1; row++) {
+            let classTR = "";
+            if (row === 0) {
+              classTR = "bg-primary";
+            }
+            table_output += `<tr class=${classTR}>`;
+            for (var cell = 0; cell < sheet_data[row].length; cell++) {
+              if (row == 0) {
+                table_output +=
+                  "<td class='text-white'>" + sheet_data[row][cell] + "</td>";
+              } else {
+                table_output += "<td>" + sheet_data[row][cell] + "</td>";
+              }
+            }
+            table_output += "</thead></tr>";
+          }
+
+          table_output += "<tbody>";
+          for (var row = 1; row < sheet_data.length; row++) {
+            let classTR = "";
+            if (row === 0) {
+              classTR = "bg-primary";
+            }
+
+            table_output += `<tr class=${classTR}>`;
+            for (var cell = 0; cell < sheet_data[row].length; cell++) {
+              if (row == 0) {
+                table_output +=
+                  "<td class='text-white'>" + sheet_data[row][cell] + "</td>";
+              } else {
+                table_output += "<td>" + sheet_data[row][cell] + "</td>";
+              }
+            }
+            table_output += "</tr>";
+          }
+          table_output += "</tbody></table>";
+          document.getElementById("excel_data_step_four").innerHTML =
+            table_output;
+        }
+        excel_file.value = "";
+      };
+    });
+  }
+
+  function StepFive() {
+    const loading = document.getElementById("loading");
+    const textLoading = document.getElementById("text-loading");
+    const resultTest = document.getElementById("result_test");
+    const resultSuccess = document.getElementById("result_success");
+    resultTest.innerHTML = "";
+    resultTest.classList.remove("none");
+    resultSuccess.classList.add("none");
+
+    if (loading.classList.contains("none")) {
+      loading.classList.remove("none");
+    }
+    if (textLoading.classList.contains("none")) {
+      textLoading.classList.remove("none");
+    }
+    if (!resultTest.classList.contains("none")) {
+      resultTest.classList.add("none");
+    }
+    btn_next.classList.toggle("none");
+
+    setTimeout(() => {
+      loading.classList.add("none");
+      textLoading.classList.add("none");
+      resultTest.classList.remove("none");
+      resultSuccess.classList.add("none");
+      const dataExcelStepFour = document.getElementById("excel_data_step_four");
+      const dataExcel = dataExcelStepFour.querySelector("table");
+      const arrayTable = [];
+      const thead = dataExcel.querySelectorAll("thead tr td");
+      const tbody = dataExcel.querySelectorAll("tbody tr");
+
+      let isComplete = true;
+      thead.forEach((item) => arrayTable.push(item.innerHTML));
+      let newData = [];
+      arrayTable.forEach((item, index) => {
+        const listTdBody = [];
+        tbody.forEach((trBody) => {
+          const tdBody = trBody.querySelectorAll("td");
+          listTdBody.push(tdBody[index].innerHTML || "");
+        });
+        newData = [...newData, { [item]: listTdBody }];
+      });
+      function checkValueExcelEmpty() {
+        newData.forEach((item) => {
+          Object.values(item).forEach((listValueOfCol) => {
+            listValueOfCol.forEach((value) => {
+              if (value === "") {
+                isComplete = false;
+                resultTest.innerHTML += `- Tại cột ${
+                  Object.keys(item)[0]
+                } có một hàng đang bị bỏ trống <br>`;
+              }
+            });
+          });
+        });
+      }
+
+      function checkTypeRoomIDValid() {
+        const index = newData.findIndex(
+          (item) => Object.keys(item)[0] === "type_room_id"
+        );
+        let isValid = true;
+        let arrayTypeRoom = [];
+        listTypeRoom.forEach((item) => arrayTypeRoom.push(item.type_room_id));
+
+        const array_temp = Object.values(newData[index])[0];
+        array_temp.forEach((item) => {
+          if (item.trim() !== "") {
+            isValid = arrayTypeRoom.includes(item);
+          }
+        });
+        if (!isValid) {
+          isComplete = false;
+          resultTest.innerHTML += `- Một giá trị tại cột type_room_id chưa phù hợp</br>`;
+        }
+      }
+      function checkTypeOfNumber(value) {
+        const index = newData.findIndex(
+          (item) => Object.keys(item)[0] === value
+        );
+        let isValid = true;
+
+        const array_temp = Object.values(newData[index])[0];
+        array_temp.map((item) => {
+          if (item.trim() !== "") {
+            if (isValid) {
+              isValid = Boolean(Number(item));
+            }
+          }
+        });
+        if (!isValid) {
+          isComplete = false;
+          resultTest.innerHTML += `- Một giá trị tại cột ${value} chưa phù hợp</br>`;
+        }
+      }
+      function checkColData() {
+        function checkMax(a, b) {
+          return (a = b ? a : a > b ? a : b);
+        }
+        if (ContainColTable != checkMax(thead.length, tbody.length)) {
+          isComplete = false;
+          resultTest.innerHTML += `- Số cột trong file chưa phù hợp</br>`;
+        }
+      }
+      checkColData();
+      checkValueExcelEmpty();
+      checkTypeRoomIDValid();
+      checkTypeOfNumber("area");
+      checkTypeOfNumber("room_price");
+      checkTypeOfNumber("max_people");
+      checkTypeOfNumber("floor");
+
+      if (isComplete) {
+        dataRoomStepFive = [...newData];
+        resultTest.classList.add("none");
+        resultSuccess.classList.remove("none");
+        btn_next.classList.remove("none");
+      } else {
+        btn_next.classList.add("none");
+      }
+    }, 3000);
+  }
+  function StepSix() {
+    const result_success = document.getElementById("result_success_step_six");
+    const result_error = document.getElementById("result_error_step_six");
+
+    const loading = document.getElementById("loading_step_six");
+    const text_loading = document.getElementById("text-loading_step_six");
+    setTimeout(() => {
+      function getDataRoom(motel_id) {
+        const lengthArray = Object.values(dataRoomStepFive[0])[0].length;
+        const newArrayData = [];
+        for (let n = 0; n < lengthArray; n++) {
+          let dataItem = {};
+          for (let i = 0; i < dataRoomStepFive.length; i++) {
+            dataItem = {
+              ...dataItem,
+              [Object.keys(dataRoomStepFive[i])[0]]: Object.values(
+                dataRoomStepFive[i]
+              )[0][n],
+            };
+          }
+          dataItem = { ...dataItem, motel_id: motel_id };
+          newArrayData.push(dataItem);
+        }
+        return newArrayData;
+      }
+
+      const roomItemList = getDataRoom(formValueStepOne.motel_id);
+      roomItemList.forEach((roomItem) => {
+        addRoom(roomItem);
+      });
+
+      function addRoom(dataRoom) {
+        let conditions = {
+          method: "POST",
+          headers: {
+            Authorization:
+              "Bearer " + JSON.parse(sessionStorage.getItem("TOKEN")),
+            "Content-Type": "application/json",
+            // 'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: JSON.stringify(dataRoom),
+        };
+
+        fetch(`http://localhost:8888/room/add-room`, conditions)
+          .then((response) => response.json())
+          .then((data) => {
+            result_success.classList.remove("none");
+          })
+          .catch((error) => {
+            result_error.classList.remove("none");
+            console.log(error);
+          });
+      }
+
+      loading.classList.add("none");
+      text_loading.classList.add("none");
+    }, 3000);
+  }
+
+  function checkModeCurrent() {
+    switch (modeCurrent) {
+      case listMode[0].type: {
+        //Bước 1
+        StepOne();
+        break;
+      }
+      case listMode[1].type: {
+        //Bước 2
+        StepTwo();
+
+        break;
+      }
+      case listMode[2].type: {
+        //Bước 3
+        StepThree();
+
+        break;
+      }
+      case listMode[3].type: {
+        //Bước 4
+        StepFour();
+        break;
+      }
+      case listMode[4].type: {
+        //bước 5
+        StepFive();
+        break;
+      }
+      case listMode[5].type: {
+        //bước 6
+        btn_next.classList.add("none");
+        btn_back.classList.add("none");
+        StepSix();
+
+        break;
+      }
+    }
+  }
+  checkModeCurrent();
+</script>

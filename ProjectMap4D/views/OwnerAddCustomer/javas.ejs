@@ -1,0 +1,314 @@
+<script>
+  document.getElementById("containerLisRoom").classList.add("none");
+  document.getElementById("container_form").classList.add("none");
+  let formValue = {
+    room_id: "",
+    motel_id: "",
+    user_id: "",
+  };
+  const getListMotel = () => {
+    const user_id = JSON.parse(sessionStorage.getItem("user_id"));
+    let conditions = {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + JSON.parse(sessionStorage.getItem("TOKEN")),
+        "Content-Type": "application/json",
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    };
+
+    fetch(`http://localhost:8888/motel/list/${user_id}`, conditions)
+      .then((response) => response.json())
+      .then((data) => {
+        const listRoom = data.result;
+        const listOption = document.getElementById("listMotel");
+        listRoom.map((item, index) => {
+          listOption.innerHTML += `<option value="${item.motel_id}">${item.motel_name}</option>`;
+        });
+      })
+      .catch((error) => console.log(error));
+  };
+  getListMotel();
+  const listMotel = document.getElementById("listMotel");
+  const listRoom = document.getElementById("listRoom");
+  listMotel.addEventListener("change", (e) => {
+    const value = e.target.value;
+    const name = e.target.name;
+    formValue = {
+      ...formValue,
+      [name]: value,
+    };
+    document.getElementById("email").value = "";
+    if (value === "") {
+      document.getElementById("container_form").classList.add("none");
+      document.getElementById("containerLisRoom").classList.add("none");
+    } else {
+      // getDetailMotel();
+      getListRoom(value);
+    }
+  });
+  listRoom.addEventListener("change", (e) => {
+    const value = e.target.value;
+    const name = e.target.name;
+    formValue = {
+      ...formValue,
+      [name]: value,
+    };
+    document.getElementById("result_customer").classList.add("none");
+    document.getElementById("email").value = "";
+    if (value === "") {
+      document.getElementById("container_form").classList.add("none");
+      resetEmail();
+    } else {
+      document.getElementById("container_form").classList.remove("none");
+      resetEmail();
+    }
+  });
+
+  const snakeBar = document.querySelector(".snake__bar");
+
+  const setSnakeBar = (value, type) => {
+    snakeBar.classList.add(`showSnake__bar__${type}`);
+    snakeBar.querySelector(".snake__value").innerHTML = value;
+    setTimeout(() => {
+      snakeBar.classList.remove(`showSnake__bar__${type}`);
+    }, 1000);
+  };
+
+  function getListRoom(motel_id) {
+    document.getElementById("containerLisRoom").classList.remove("none");
+    document.getElementById("container_form").classList.add("none");
+    resetEmail();
+    let conditions = {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + JSON.parse(sessionStorage.getItem("TOKEN")),
+        "Content-Type": "application/json",
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    };
+
+    fetch(`http://localhost:8888/room/list?motel_id=${motel_id}`, conditions)
+      .then((response) => response.json())
+      .then((data) => {
+        const listRoom = data.result;
+        const listOption = document.getElementById("listRoom");
+        listOption.innerHTML = ` <option value="" checked>------</option>`;
+        listRoom.map((item, index) => {
+          listOption.innerHTML += `<option value="${item.room_id}">${item.room_name}</option>`;
+        });
+      })
+      .catch((error) => console.log(error));
+  }
+
+  function resetEmail() {
+    // document.getElementById("email").value = "";
+    formValue = {
+      ...formValue,
+      user_id: "",
+    };
+  }
+  const email = document.getElementById("email");
+  email.addEventListener("change", (e) => {
+    const value = e.target.value;
+    getResultEmail(value);
+  });
+  function getResultEmail(email) {
+    const data = {
+      email: email,
+    };
+    let conditions = {
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + JSON.parse(sessionStorage.getItem("TOKEN")),
+        "Content-Type": "application/json",
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: JSON.stringify(data),
+    };
+    fetch("http://localhost:8888/user/get-email/for-owner", conditions)
+      .then((res) => res.json())
+      .then((data) => {
+        if (
+          data.result.error === undefined &&
+          data.result[0].role_id === "ID_002"
+        ) {
+          document.getElementById("result_customer").classList.remove("none");
+          formValue = {
+            room_id: document.getElementById("listRoom").value,
+            motel_id: document.getElementById("listMotel").value,
+            user_id: data.result[0].user_id,
+          };
+          const customer = data.result[0];
+          console.log(customer);
+          const resultCustomer = document.getElementById("result_customer");
+          resultCustomer.innerHTML = `
+          <div
+                class="bg-light p-3"
+                style="box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px"
+              >
+                <p>Email: ${customer.email}</p>
+                <p>Tên: ${customer.username}</p>
+                <p>Số điện thoại: ${customer.numberPhone ?? ""}</p>
+              </div>
+            `;
+        } else {
+          setSnakeBar("Không có kết quả tìm kiếm", "error");
+          document.getElementById("result_customer").classList.add("none");
+          resetEmail();
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+  const btnAdd = document.getElementById("btn_add");
+  btnAdd.addEventListener("click", () => {
+    const email = document.getElementById("email").value;
+    if (formValue.user_id === "" || email === "") {
+      setSnakeBar("Vui lòng nhập địa chỉ email", "error");
+    } else {
+      Modal();
+    }
+  });
+
+  function Modal() {
+    /* lấy phần tử modal */
+    let modal = document.getElementById("myModal");
+    /* thiết lập nút mở modal */
+    modal.style.display = "block";
+    /*Sẽ đóng modal khi nhấp ra ngoài màn hình*/
+    window.onclick = function (event) {
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    };
+  }
+  btnCancel = document.getElementById("btn_cancel");
+  btnCancel.addEventListener("click", () => {
+    let modal = document.getElementById("myModal");
+    modal.style.display = "none";
+  });
+
+  function handleDataModal() {
+    const date = new Date();
+    const toDate = `${date.getFullYear()}-${(date.getMonth() + 1)
+      .toString()
+      .padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")}`;
+    let formDataModal = {
+      date_start: "",
+      date_end: "",
+      time_payment: "",
+      price: "",
+    };
+    const date_start = document.getElementById("date_start");
+    date_start.addEventListener("change", (e) => {
+      const value = e.target.value;
+      const name = e.target.name;
+      formDataModal = {
+        ...formDataModal,
+        [name]: value,
+      };
+    });
+    const date_end = document.getElementById("date_end");
+    date_end.addEventListener("change", (e) => {
+      const value = e.target.value;
+      const name = e.target.name;
+      formDataModal = {
+        ...formDataModal,
+        [name]: value,
+      };
+    });
+    const time_payment = document.getElementById("time_payment");
+    time_payment.addEventListener("change", (e) => {
+      const value = e.target.value;
+      const name = e.target.name;
+      formDataModal = {
+        ...formDataModal,
+        [name]: value,
+      };
+    });
+    const price = document.getElementById("price");
+    price.addEventListener("change", (e) => {
+      const value = e.target.value;
+      const name = e.target.name;
+      formDataModal = {
+        ...formDataModal,
+        [name]: value,
+      };
+    });
+    const btnSubmit = document.getElementById("btn_submit");
+    btn_submit.addEventListener("click", () => {
+      //   console.log(formDataModal);
+      //   console.log(toDate);
+      if (
+        formDataModal.date_start === "" ||
+        formDataModal.date_end === "" ||
+        formDataModal.time_payment === ""
+      ) {
+        setSnakeBar("Vui lòng nhập giá trị", "error");
+      } else {
+        handleCheck();
+      }
+    });
+    function handleCheck() {
+      const date_start = new Date(formDataModal.date_start);
+      const date_end = new Date(formDataModal.date_end);
+      const time_payment = new Date(formDataModal.time_payment);
+      const toDate = new Date();
+      let isComplete = true;
+      if (date_start.toISOString() < toDate.toISOString()) {
+        setSnakeBar("Ngày bắt đầu chưa hợp lệ", "error");
+        isComplete = false;
+      }
+      if (date_end.toISOString() < toDate.toISOString()) {
+        setSnakeBar("Ngày kết thúc chưa hợp lệ", "error");
+        isComplete = false;
+      }
+      if (time_payment.toISOString() < date_start.toISOString()) {
+        setSnakeBar("Thời gian thanh toán chưa hợp lệ", "error");
+        isComplete = false;
+      }
+      if (formDataModal.price === "") {
+        setSnakeBar("Vui lòng nhập tiền thanh toán");
+        isComplete = false;
+      }
+      if (isComplete) {
+        const data = {
+          ...formDataModal,
+          ...formValue,
+        };
+        // console.log(data);
+        addRent(data);
+      }
+    }
+    function addRent(data) {
+      let options = {
+        method: "POST",
+        headers: {
+          Authorization:
+            "Bearer " + JSON.parse(sessionStorage.getItem("TOKEN")),
+          "Content-Type": "application/json",
+          // 'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: JSON.stringify(data),
+      };
+      fetch("http://localhost:8888/rent/add", options)
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.result.error !== undefined) {
+            setSnakeBar(data.result.error, "error");
+          } else {
+            setSnakeBar("Thêm thành công", "success");
+            setTimeout(() => {
+              location.href = "http://localhost:3000/owner/add-customer";
+            }, 1000);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  }
+  handleDataModal();
+</script>

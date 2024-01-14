@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('./style'); %>
+  </head>
+  <body>
+    <input type="checkbox" id="checkShowMenuPanel" checked />
+    <input type="checkbox" id="closeMenuPanel" checked />
+    <input type="checkbox" id="checkShowMenuMain" />
+    <div class="navbar__user" id="username"></div>
+    <div class="menu" id="menu">
+      <div class="menu__layout">
+        <div class="menu__layout__bar">
+          <label class="menu__btn__bar" for="checkShowMenuMain">
+            <img src="images/bar.png" class="menu__img__bar" alt="bar" />
+          </label>
+        </div>
+        <div class="menu__search__box">
+          <input
+            class="menu__search__box__input"
+            type="text"
+            placeholder="Tìm kiếm trên google map 4D"
+            id="search__input"
+          />
+
+          <input type="checkbox" id="checkShowMenuFilter" />
+          <div class="menu__filter__search">
+            <div
+              class="menu__filter__search__layout"
+              id="menu__filter__search__container"
+            >
+              <div class="menu__filter__search__item">
+                <div class="filter__distance">
+                  <label class="switch">
+                    <input type="checkbox" id="radius" />
+                    <span class="slider round"></span>
+                  </label>
+                  <div class="filter__container">
+                    <span class="filter__name">Khoảng cách: </span>
+                    <input
+                      class="filter__value"
+                      id="value__radius"
+                      type="number"
+                      min="2"
+                      value="2"
+                    />
+                    <span class="filter__init">( km )</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="menu__search__box__icon">
+            <!-- <label
+              class="menu__search__box__icon--filter"
+              for="checkShowMenuFilter"
+            >
+              <img src="/images/icon__filter.png" class="icon__filter" />
+            </label> -->
+            <!-- for="checkMenuResult" -->
+            <label
+              id="icon__search__box--glass"
+              class="menu__search__box__icon--glass"
+              style="cursor: pointer"
+            ></label>
+          </div>
+
+          <div class="menu__search__box__icon__direct">
+            <label
+              for="checkShowMenuFilter"
+              class="menu__search__box__icon--direct"
+            >
+              <img
+                src="/images/icon__filter.png"
+                class="menu__search__box__img--direct"
+                alt="icon__direct"
+              />
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="menu__panel">
+      <div class="menu__panel__layout">
+        <div class="menu__panel__layout__V2">
+          <div class="menu__panel__container">
+            <div class="menu__panel__container__content">
+              <div class="menu__panel__container__content__header">
+                <div class="menu__panel__logo">
+                  <img
+                    class="menu__panel__logo--img"
+                    src="/images/logoMap.png"
+                    alt="logo"
+                  />
+                </div>
+                <div class="menu__panel__select" id="select__vehicle">
+                  <div class="menu__panel__select__icon" id="btn__direct">
+                    <img
+                      class="menu__panel__select__icon--img"
+                      src="/images/select__direct.png"
+                      alt="icon__direct"
+                    />
+                  </div>
+                  <input
+                    type="radio"
+                    name="checkVehicle"
+                    id="checkCar"
+                    checked
+                    value="car"
+                  />
+                  <label class="menu__panel__select__icon" for="checkCar">
+                    <img
+                      class="menu__panel__select__icon--img"
+                      src="/images/select__car.png"
+                      alt="icon__direct"
+                    />
+                  </label>
+                  <input
+                    type="radio"
+                    name="checkVehicle"
+                    id="checkMotor"
+                    value="motorcycle"
+                  />
+                  <label
+                    class="menu__panel__select__icon pb-1"
+                    for="checkMotor"
+                  >
+                    <img
+                      class="menu__panel__select__icon--img"
+                      src="/images/select__moto.png"
+                      alt="icon__direct"
+                    />
+                  </label>
+                  <input
+                    type="radio"
+                    name="checkVehicle"
+                    id="checkFoot"
+                    value="foot"
+                  />
+                  <label class="menu__panel__select__icon" for="checkFoot">
+                    <img
+                      class="menu__panel__select__icon--img"
+                      src="/images/select__foot.png"
+                      alt="icon__direct"
+                    />
+                  </label>
+                  <input
+                    type="radio"
+                    name="checkVehicle"
+                    id="checkBike"
+                    value="bike"
+                  />
+                  <label class="menu__panel__select__icon" for="checkBike">
+                    <img
+                      class="menu__panel__select__icon--img"
+                      src="/images/select__bike.png"
+                      alt="icon__direct"
+                    />
+                  </label>
+                </div>
+                <label for="closeMenuPanel" class="menu__panel__close">
+                  <div class="menu__panel__close--img"></div>
+                </label>
+              </div>
+              <div class="menu__panel__container__content__form">
+                <div class="menu__panel__container__content__form--input">
+                  <label
+                    class="menu__panel__container__content__body--input"
+                    for="menu__panel__container__select__location"
+                  >
+                    Trường Đại học Nha Trang
+                  </label>
+                  <input
+                    readonly
+                    disabled
+                    type="text"
+                    id="menu__pannel__location__to"
+                    class="menu__panel__container__content__body--input"
+                    placeholder="Nhấp vào bản đồ để chọn điểm đến...."
+                  />
+                  <input
+                    type="checkbox"
+                    id="menu__panel__container__select__location"
+                  />
+                  <label
+                    for="menu__panel__container__select__location"
+                    class="menu__panel__container__select__location__layout"
+                  ></label>
+                  <div class="menu__panel__container__select__location">
+                    <div
+                      id="choose__CurrentLocation"
+                      class="menu__panel__container__select__location__layout"
+                    >
+                      <img
+                        src="/images/icon__location.png"
+                        class="icon__location"
+                      />
+                      <span
+                        class="menu__panel__container__select__location__value"
+                        >Vị trí của bạn</span
+                      >
+                    </div>
+                    <div
+                      id="choose__SchoolLocation"
+                      class="menu__panel__container__select__location__layout"
+                    >
+                      <img
+                        src="/images/icon__location.png"
+                        class="icon__location"
+                      />
+                      <span
+                        class="menu__panel__container__select__location__value"
+                        >Trường Đại học Nha Trang</span
+                      >
+                    </div>
+                    <!-- <div
+                      class="menu__panel__container__select__location__layout"
+                    >
+                      <img
+                        src="/images/icon__location.png"
+                        class="icon__location"
+                      />
+                      <span
+                        class="menu__panel__container__select__location__value"
+                        >Vị trí của bạn</span
+                      >
+                    </div> -->
+                  </div>
+                </div>
+                <div class="menu__panel__container__content__swap">
+                  <button class="menu__panel__container__content__swap__btn">
+                    <div
+                      class="menu__panel__container__content__swap--img"
+                    ></div>
+                  </button>
+                </div>
+              </div>
+              <div class="menu__panel__container__tutorial">
+                <img src="/images/select__foot.png" />
+                <div class="menu__panel__tutorial__time">
+                  <span>Thời gian di chuyển</span>
+                  <span class="menu__panel__tutorial__time--desc">
+                    <span class="tutorial__time">2 giờ 30 phút</span>
+                    <span class="tutorial__distance">10,1 km</span></span
+                  >
+                </div>
+                <div class="menu__panel__tutorial__btn">
+                  <label for="checkShowDESC">Chi tiết</label>
+                </div>
+              </div>
+              <input type="checkBox" id="checkShowDESC" />
+              <div class="menu__panel__desc">
+                <p>Mô tả chi tiết</p>
+                <span id="desc__instruction__road">
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                  Ut enim ad minim veniam, quis nostrud exercitation ullamco
+                  laboris nisi ut aliquip ex ea commodo consequat. Duis aute
+                  irure dolor in reprehenderit in voluptate velit esse cillum
+                  dolore eu fugiat nulla pariatur. Excepteur sint occaecat
+                  cupidatat non proident, sunt in culpa qui officia deserunt
+                  mollit anim id est laborum.
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="menu__panel__show">
+        <label class="menu__panel__show__layout" for="checkShowMenuPanel">
+          <svg
+            class="menu__panel__show__icon"
+            xmlns="http://www.w3.org/2000/svg"
+            fit=""
+            height="100%"
+            width="100%"
+            preserveAspectRatio="xMidYMid meet"
+            viewBox="0 0 24 24"
+            focusable="false"
+          >
+            <g id="chevron-right_cache20">
+              <path
+                d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z"
+              ></path>
+            </g>
+          </svg>
+        </label>
+      </div>
+    </div>
+    <label class="layout__menu__main" for="checkShowMenuMain"></label>
+    <div class="menu__main">
+      <div class="menu__main__layout__img">
+        <img src="/images/logoMap.png" />
+        <label class="menu__main__img__close" for="checkShowMenuMain">
+          <img src="/images/icon__close.png" />
+        </label>
+      </div>
+      <div class="menu__main__layout__container">
+        <div class="menu__main__layout__container__layout">
+          <div class="menu__main__layout__container__layout__item">
+            <a href="http://localhost:3000/">Trang chủ</a>
+          </div>
+          <div class="menu__main__layout__container__layout__item">
+            <a href="http://localhost:3000/room-of-me">Phòng trọ của tôi</a>
+          </div>
+          <div class="menu__main__layout__container__layout__item">
+            <a href="http://localhost:3000/account/settings"
+              >Tài khoản của tôi</a
+            >
+          </div>
+        </div>
+        <div class="menu__main__layout__logout" id="btn_logout_menu">
+          <a>Đăng xuất</a>
+        </div>
+      </div>
+    </div>
+    <input type="checkbox" id="checkMenuResult" />
+
+    <div class="menu__result">
+      <div class="menu__result__show">
+        <label class="menu__result__show__layout" for="checkMenuResult">
+          <svg
+            class="menu__result__show__icon"
+            xmlns="http://www.w3.org/2000/svg"
+            fit=""
+            height="100%"
+            width="100%"
+            preserveAspectRatio="xMidYMid meet"
+            viewBox="0 0 24 24"
+            focusable="false"
+          >
+            <g id="chevron-right_cache20">
+              <path
+                d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z"
+              ></path>
+            </g>
+          </svg>
+        </label>
+      </div>
+      <div class="menu__result__container" id="menu__result__container">
+        <div class="d-none" id="motel_id"></div>
+        <img
+          class="menu__result__container__img"
+          src="https://lh5.googleusercontent.com/p/AF1QipNUT7LkuXzemjRPxFRvZ-PH1E2Svk4hvJqQtPO5=w408-h270-k-no"
+        />
+        <div class="menu__result__container__title">
+          <span id="result__name"> Trường Đại học Nha Trang</span>
+        </div>
+        <div class="menu__result__container__btns">
+          <button class="menu__result__container__btn">
+            <label for="closeMenuPanel">
+              <img
+                src="https://www.gstatic.com/images/icons/material/system/1x/directions_white_18dp.png"
+              />
+            </label>
+            <div class="menu__result__container__text">Đường đi</div>
+          </button>
+          <button class="menu__result__container__btn" id="btn__info__motel">
+            <span>
+              <img
+                src="https://www.gstatic.com/images/icons/material/system_gm/1x/bookmark_border_gm_blue_18dp.png"
+              />
+            </span>
+            <div class="menu__result__container__text">Thông tin</div>
+          </button>
+        </div>
+
+        <div class="menu__result__container__desc">
+          <div class="menu__result__container__desc__item">
+            <div class="menu__result__container__desc__item__img">
+              <img
+                src="https://www.gstatic.com/images/icons/material/system_gm/1x/place_gm_blue_24dp.png"
+                alt=""
+              />
+            </div>
+            <div class="menu__result__container__desc__item__text">
+              <span id="result__address"
+                >33 Đ. Bắc Sơn, Vĩnh Hải, Nha Trang, Khánh Hòa 650000, Việt
+                Nam</span
+              >
+            </div>
+          </div>
+          <div class="menu__result__container__desc__item">
+            <div class="menu__result__container__desc__item__img">
+              <img
+                src="https://www.gstatic.com/images/icons/material/system_gm/1x/phone_gm_blue_24dp.png"
+                alt=""
+              />
+            </div>
+            <div class="menu__result__container__desc__item__text">
+              <span id="result__numberPhone">+84 90 288 65 88</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <%- include('./javas.ejs'); %>
+  </body>
+</html>

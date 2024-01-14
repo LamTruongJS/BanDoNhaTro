@@ -1,0 +1,14 @@
+npm init
+npm install express
+npm install body-parser
+npm install mysql
+npm i express-handlebars
+npm i nodemon
+npm i cookie-parser
+npm i dotenv
+npm i ejs
+npm i google-auth-library
+npm i jsonwebtoken
+npm i cors
+npm i axios
+npm i fs

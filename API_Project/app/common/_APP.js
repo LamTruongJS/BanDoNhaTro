@@ -1,0 +1,7 @@
+const ACCESS_TOKEN = "ABCHAJKNASKAHSKLAJKA";
+const TOKEN_TIME_LIFE = "24h";
+
+module.exports = {
+  ACCESS_TOKEN,
+  TOKEN_TIME_LIFE,
+};

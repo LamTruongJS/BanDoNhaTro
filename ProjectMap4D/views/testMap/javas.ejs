@@ -1,0 +1,130 @@
+<script>
+  const access_key = "82388984ac71fb9b9d05509e99a42fad";
+  let location4D = {};
+  let locationGoogle = {};
+  const listDirections = [];
+  const listMaker = [];
+  const searchInput = document.getElementById("search__input");
+  const searchBtn = document.getElementById("icon__search__box--glass");
+  const handleMenuResult = (isActive) => {
+    const checkMenuResult = document.getElementById("checkMenuResult");
+    checkMenuResult.checked = isActive;
+  };
+
+  const setSnakeBar = (value, type) => {
+    snakeBar.classList.add(`showSnake__bar__${type}`);
+    snakeBar.querySelector(".snake__value").innerHTML = value;
+    setTimeout(() => {
+      snakeBar.classList.remove(`showSnake__bar__${type}`);
+    }, 1000);
+  };
+
+  const setLocationDirectForm = (location, locationAPI) => {
+    const destination = document.getElementById("menu__pannel__location__to");
+    let options = {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + JSON.parse(sessionStorage.getItem("TOKEN")),
+        "Content-Type": "application/json",
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    };
+    fetch(
+      `http://localhost:8888/motel/detail-by-location?lat=${locationAPI.lat}&lng=${locationAPI.lng}`,
+      options
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        // console.log(data);
+        const arrayResult = data.result[0];
+        const name = arrayResult.motel_name;
+        destination.value = name;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  function initMap() {
+    window.navigator.geolocation.getCurrentPosition((pos) => {
+      const currentLocation = {
+        lat: pos.coords.latitude,
+        lng: pos.coords.longitude,
+      };
+
+      const schoolLocation = { lat: 12.26812, lng: 109.202376 };
+      let startLocationForDirect = { ...schoolLocation };
+      let options = {
+        center: schoolLocation,
+        zoom: 15,
+        controls: true,
+        geolocate: true,
+      };
+      let map = new map4d.Map(document.getElementById("map"), options);
+
+      searchInput.addEventListener("keypress", (e) => {
+        let valueSearch = searchInput.value;
+        if (e.which === 13) {
+          const url = `http://api.map4d.vn/sdk/place/text-search?key=${access_key}&text=${valueSearch}`;
+          searchMap(url);
+        }
+      });
+      searchBtn.addEventListener("click", () => {
+        let valueSearch = document.getElementById("search__input").value;
+        if (valueSearch.trim() === "") {
+          setSnakeBar("Vui lòng nhập giá trị", "error");
+        } else {
+          const url = `http://api.map4d.vn/sdk/place/text-search?key=${access_key}&text=${valueSearch}`;
+          searchMap(url);
+        }
+      });
+
+      const searchMap = (url) => {
+        let options = {
+          method: "GET",
+        };
+        fetch(url, options)
+          .then((response) => {
+            return response.json();
+          })
+          .then((data) => {
+            console.log(data);
+            const locationSearch = data.result[1].location;
+            searchNear(locationSearch);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      };
+      function searchNear(location) {
+        const url = `http://api.map4d.vn/sdk/place/nearby-search?key=${access_key}&location=${schoolLocation.lat},${schoolLocation.lng}&radius=1000&text=trọ`;
+        let options = {
+          method: "GET",
+        };
+        fetch(url, options)
+          .then((response) => {
+            return response.json();
+          })
+          .then((data) => {
+            const points = data.result;
+            console.log(points);
+            for (let i = 0; i < points.length; i++) {
+              const location = {
+                lat: points[i].location.lat,
+                lng: points[i].location.lng,
+              };
+              let marker = new map4d.Marker({
+                // title: data.name,
+                // snippet: data.address,
+                position: location,
+                // icon: 'http://img.icons8.com/nolan/1x/marker.png',
+                anchor: [0.5, 0.5],
+                EventOptions: true,
+              });
+              marker.setMap(map);
+            }
+          });
+      }
+    });
+  }
+</script>

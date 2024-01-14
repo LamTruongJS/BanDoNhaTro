@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="google-signin-client_id"
+      content="256374776860-a20pactnsh4lfoae05gplj8kkp29dvnn.apps.googleusercontent.com"
+    />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/css/materialize.min.css"
+    />
+
+    <link rel="icon" type="image/x-icon" href="/images/logoMap.png" />
+    <%- include('./style'); %>
+    <title>Đăng Nhập</title>
+  </head>
+  <body>
+    <div id="snake__bar" class="snake__bar">
+      <span class="snake__text"></span>
+    </div>
+    <div class="container">
+      <div class="forms-container">
+        <div class="signin-signup">
+          <form
+            class="col s12 sign-in-form z-depth-2 grey lighten-4"
+            method="post"
+            id="formLogin"
+          >
+            <div class="row">
+              <div class="col s12">
+                <h2 class="title">Đăng nhập</h2>
+              </div>
+            </div>
+            <div class="row">
+              <div class="input-field col s12">
+                <input
+                  class="validate"
+                  type="email"
+                  name="email"
+                  id="email"
+                  required
+                />
+                <label for="email">Email</label>
+              </div>
+              <div class="input-field col s12">
+                <input
+                  class="validate"
+                  type="password"
+                  name="password"
+                  id="password"
+                  required
+                />
+                <label for="password">Mật khẩu</label>
+              </div>
+              <label style="float: right">
+                <a
+                  class="pink-text"
+                  href="http://localhost:3000/forgot-password"
+                  ><b>Quên mật khẩu?</b></a
+                >
+              </label>
+            </div>
+
+            <div>
+              <button
+                id="submit"
+                type="button"
+                name="btn_login"
+                class="col s12 btn waves-effect waves-light btn__login light-blue darken-3"
+              >
+                Đăng nhập
+              </button>
+            </div>
+            <p class="social-text">
+              Hãy thử đăng nhập với tài khoảng google nhé !
+            </p>
+            <div class="social-media row">
+              <div
+                class="g-signin2 btnLoginGoogle"
+                data-onsuccess="onSignIn"
+              ></div>
+            </div>
+          </form>
+        </div>
+        <div class="choose__role">
+          <div class="choose__role__container">
+            <div class="choose__role__button">
+              <img src="/images/icon__close.png" />
+            </div>
+            <div class="row">
+              <div class="select" tabindex="1">
+                <input
+                  class="selectopt"
+                  name="role"
+                  type="radio"
+                  id="landlord"
+                  checked
+                  value="landlord"
+                />
+                <label for="landlord" class="option">Chủ nhà trọ</label>
+                <input
+                  class="selectopt"
+                  name="role"
+                  type="radio"
+                  id="user"
+                  value="user"
+                />
+                <label for="user" class="option">Khách thuê trọ</label>
+              </div>
+              <div class="choose__role__button__confirm">
+                <button>Xác nhận</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panels-container">
+        <div class="panel left-panel">
+          <div class="content">
+            <h3>Map 4D</h3>
+            <p>
+              Chào bạn, Nếu bạn muốn sử dụng website, vui lòng đăng kí hoặc đăng
+              nhập tại đây !!!
+            </p>
+            <a href="../Register" class="btn transparent" id="sign-up-btn"
+              >Đăng kí</a
+            >
+          </div>
+          <img src="images/log.svg" class="image" alt="" />
+        </div>
+      </div>
+    </div>
+    <script
+      type="text/javascript"
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.1/jquery.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/js/materialize.min.js"
+    ></script>
+    <script
+      src="https://apis.google.com/js/platform.js?onload=onLoad"
+      async
+      defer
+    ></script>
+
+    <%- include('./javas'); %>
+  </body>
+</html>

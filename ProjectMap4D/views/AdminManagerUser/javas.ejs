@@ -1,0 +1,399 @@
+<script>
+  const tableBody = document.getElementById("table-body");
+  const snakeBar = document.querySelector(".snake__bar");
+  const setSnakeBar = (value, type) => {
+    snakeBar.classList.add(`showSnake__bar__${type}`);
+    snakeBar.querySelector(".snake__value").innerHTML = value;
+    setTimeout(() => {
+      snakeBar.classList.remove(`showSnake__bar__${type}`);
+    }, 1000);
+  };
+  let typeCurrent = "";
+  function getListUser() {
+    const filterRole = document.getElementById("filter_role");
+    const roleValue = filterRole.value;
+
+    let options = {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + JSON.parse(sessionStorage.getItem("TOKEN")),
+        "Content-Type": "application/json",
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    };
+
+    fetch(`http://localhost:8888/user/get-list`, options)
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        const listUser = data.result;
+        console.log(listUser);
+        let newValue = [];
+        if (roleValue === "all") {
+          newValue = [...listUser];
+        } else {
+          newValue = listUser.filter((item) => item.role_id == roleValue);
+        }
+        for (let i = 0; i < newValue.length; i++) {
+          const user = newValue[i];
+          if (i === 0) {
+            tableBody.innerHTML = ` <tr style="cursor:pointer">
+                                      <td>${user.user_id}</td>
+                                      <td>${user.username}</td>
+                                      <td>${user.email}</td>
+                                      <td>${user.password}</td>
+                                      <td>${user.numberPhone}</td>
+                                      <td>${
+                                        user.role_id == "ID_001"
+                                          ? "Quản trị viên"
+                                          : user.role_id == "ID_002"
+                                          ? "Khách thuê trọ"
+                                          : "Chủ nhà trọ"
+                                      }
+                                    </tr>`;
+          } else {
+            tableBody.innerHTML += ` <tr style="cursor:pointer">
+                                      <td>${user.user_id}</td>
+                                      <td>${user.username}</td>
+                                      <td>${user.email}</td>
+                                      <td>${user.password}</td>
+                                      <td>${
+                                        user.numberPhone == "null"
+                                          ? ""
+                                          : user.numberPhone
+                                      }</td>
+                                      <td>${
+                                        user.role_id == "ID_001"
+                                          ? "Quản trị viên"
+                                          : user.role_id == "ID_002"
+                                          ? "Khách thuê trọ"
+                                          : "Chủ nhà trọ"
+                                      }
+                                    </tr>`;
+          }
+        }
+      });
+  }
+  getListUser();
+  const filterRole = document.getElementById("filter_role");
+  filterRole.addEventListener("change", (e) => {
+    const role = e.target.value;
+    getListUser();
+  });
+  function deleteUser(user_id) {
+    let options = {
+      method: "DELETE",
+      headers: {
+        Authorization: "Bearer " + JSON.parse(sessionStorage.getItem("TOKEN")),
+        "Content-Type": "application/json",
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    };
+
+    fetch(` http://localhost:8888/user/delete/${user_id}`, options)
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        if (data.result.success !== undefined) {
+          setSnakeBar(data.result.success, "success");
+          getListUser();
+        }
+        if (data.result.error !== undefined) {
+          setSnakeBar(data.result.error, "error");
+        }
+      });
+  }
+
+  const btnDelete = document.getElementById("btn_delete");
+  btnDelete.addEventListener("click", () => {
+    const user_id = document.getElementById("user_delete_id").value;
+    if (user_id !== "") {
+      deleteUser(user_id);
+    }
+  });
+  function Modal() {
+    const modal = document.getElementById("myModal");
+
+    const btnAddAccount = document.getElementById("btnAddAccount");
+    btnAddAccount.addEventListener("click", () => {
+      typeCurrent = "ADD";
+      modal.style.display = "block";
+      document.getElementById("user_id").value = "";
+      document.getElementById("username").value = "";
+      document.getElementById("password").value = "";
+      document.getElementById("email").value = "";
+      document.getElementById("numberPhone").value = "";
+      document.getElementById("role_id").value = "ID_001";
+      document.getElementById("notify_google").classList.add("none");
+      document.getElementById("email").removeAttribute("readonly", "true");
+      document.getElementById("password").removeAttribute("readonly", "true");
+      document.getElementById("btn_done_edit").innerText = "Thêm";
+      document.getElementById("btn_cancel_edit").innerText = "Hủy";
+      addUser();
+    });
+
+    const btnEdit = document.getElementById("btn_edit");
+    btnEdit.addEventListener("click", () => {
+      typeCurrent = "EDIT";
+      const user_id = document.getElementById("user_edit_id").value;
+      document.getElementById("btn_done_edit").innerText = "Cập nhật";
+      document.getElementById("btn_cancel_edit").innerText = "Hủy cập nhật";
+      if (user_id !== "") {
+        modal.style.display = "block";
+        getDetailUser(user_id);
+      }
+    });
+    const btnCancelEdit = document.getElementById("btn_cancel_edit");
+    btnCancelEdit.addEventListener("click", () => {
+      modal.style.display = "none";
+    });
+    window.onclick = function (event) {
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    };
+
+    function getDetailUser(user_id) {
+      let options = {
+        method: "GET",
+        headers: {
+          Authorization:
+            "Bearer " + JSON.parse(sessionStorage.getItem("TOKEN")),
+          "Content-Type": "application/json",
+          // 'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      };
+
+      fetch(`http://localhost:8888/user/info/${user_id}`, options)
+        .then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          if (data.result.error !== undefined) {
+            setSnakeBar(data.result.error, "error");
+            modal.style.display = "none";
+          } else {
+            const user = data.result[0];
+            if (user.isGoogle) {
+              document.getElementById("notify_google").classList.remove("none");
+              document.getElementById("email").setAttribute("readonly", "true");
+              document
+                .getElementById("password")
+                .setAttribute("readonly", "true");
+            } else {
+              document.getElementById("notify_google").classList.add("none");
+            }
+            document.getElementById("user_id").value = user.user_id;
+            document.getElementById("username").value = user.username;
+            document.getElementById("password").value = user.password;
+            document.getElementById("email").value = user.email;
+            document.getElementById("numberPhone").value = user.numberPhone;
+            document.getElementById("role_id").value = user.role_id;
+
+            function handleDataForEdit(user) {
+              let formValue = {
+                user_id: user.user_id,
+                username: user.username,
+                password: user.password,
+                email: user.email,
+                numberPhone: user.numberPhone,
+                role_id: user.role_id,
+                isGoogle: user.isGoogle,
+              };
+              const form = document.getElementById("form-edit");
+              const listText = form.querySelectorAll('input[type="text"]');
+              listText.forEach((item) => {
+                item.addEventListener("input", (e) => {
+                  const name = e.target.name;
+                  const value = e.target.value;
+                  formValue = { ...formValue, [name]: value };
+                });
+              });
+              const emailContainer = form.querySelector('input[type="email"]');
+              emailContainer.addEventListener("input", (e) => {
+                const name = e.target.name;
+                const value = e.target.value;
+                formValue = { ...formValue, [name]: value };
+              });
+              const selectRole = form.querySelector("select");
+              selectRole.addEventListener("change", (e) => {
+                const name = e.target.name;
+                const value = e.target.value;
+                formValue = { ...formValue, [name]: value };
+              });
+
+              const btnDoneEdit = document.getElementById("btn_done_edit");
+              btnDoneEdit.addEventListener("click", () => {
+                if (typeCurrent === "EDIT") {
+                  let isComplete = true;
+                  const arrayEmpty = Object.values(formValue).filter((item) => {
+                    if (item !== null && item !== undefined) {
+                      return item.toString().trim() === "";
+                    } else if (item === null || item === undefined) {
+                      return item === null || item === undefined;
+                    }
+                  });
+
+                  if (user.isGoogle) {
+                    if (arrayEmpty.length > 1) {
+                      isComplete = false;
+                      setSnakeBar("Giá trị không được bỏ trống", "error");
+                    }
+                  } else {
+                    if (arrayEmpty.length > 0) {
+                      isComplete = false;
+                      setSnakeBar("Giá trị không được bỏ trống", "error");
+                    }
+                  }
+
+                  if (!Number(formValue.numberPhone)) {
+                    isComplete = false;
+                    setSnakeBar("Giá trị chưa hợp lệ", "error");
+                  }
+                  if (isComplete) {
+                    console.log(formValue);
+                    editAccount(formValue);
+                  }
+                }
+              });
+              function editAccount(formValue) {
+                const newValue = {
+                  username: formValue.username,
+                  password: formValue.password,
+                  email: formValue.email,
+                  numberPhone: formValue.numberPhone,
+                  role_id: formValue.role_id,
+                  isGoogle: formValue.isGoogle,
+                };
+                let conditions = {
+                  method: "PUT",
+                  headers: {
+                    Authorization:
+                      "Bearer " + JSON.parse(sessionStorage.getItem("TOKEN")),
+                    "Content-Type": "application/json",
+                    // 'Content-Type': 'application/x-www-form-urlencoded',
+                  },
+                  body: JSON.stringify(newValue),
+                };
+
+                fetch(
+                  `http://localhost:8888/admin/user/change-info/${formValue.user_id}`,
+                  conditions
+                )
+                  .then((res) => res.json())
+                  .then((data) => {
+                    setSnakeBar("Cập nhật thành công", "success");
+                    getListUser();
+                    const modal = document.getElementById("myModal");
+                    modal.style.display = "none";
+                  })
+                  .catch((error) => console.log(error));
+              }
+            }
+            handleDataForEdit(user);
+          }
+        });
+    }
+
+    function addUser() {
+      function handleDataForAdd() {
+        let formValue = {
+          user_id: "",
+          username: "",
+          password: "",
+          email: "",
+          numberPhone: "",
+          role_id: document.getElementById("role_id").value,
+          isGoogle: false,
+        };
+        const form = document.getElementById("form-edit");
+        const listText = form.querySelectorAll('input[type="text"]');
+        listText.forEach((item) => {
+          item.addEventListener("input", (e) => {
+            const name = e.target.name;
+            const value = e.target.value;
+            formValue = { ...formValue, [name]: value };
+          });
+        });
+        const emailContainer = form.querySelector('input[type="email"]');
+        emailContainer.addEventListener("input", (e) => {
+          const name = e.target.name;
+          const value = e.target.value;
+          formValue = { ...formValue, [name]: value };
+        });
+        const selectRole = form.querySelector("select");
+        selectRole.addEventListener("change", (e) => {
+          const name = e.target.name;
+          const value = e.target.value;
+          formValue = { ...formValue, [name]: value };
+        });
+
+        const btnDoneEdit = document.getElementById("btn_done_edit");
+        btnDoneEdit.addEventListener("click", () => {
+          if (typeCurrent === "ADD") {
+            let isComplete = true;
+            const arrayEmpty = Object.values(formValue).filter((item) => {
+              if (item !== null && item !== undefined) {
+                return item.toString().trim() === "";
+              } else if (item === null || item === undefined) {
+                return item === null || item === undefined;
+              }
+            });
+
+            if (arrayEmpty.length > 1) {
+              isComplete = false;
+              setSnakeBar("Giá trị không được bỏ trống", "error");
+            }
+
+            if (!Number(formValue.numberPhone)) {
+              isComplete = false;
+              setSnakeBar("Giá trị chưa hợp lệ", "error");
+            }
+            if (isComplete) {
+              console.log(formValue);
+              addAccount(formValue);
+            }
+          }
+        });
+        function addAccount(formValue) {
+          const newValue = {
+            username: formValue.username,
+            password: formValue.password,
+            email: formValue.email,
+            numberPhone: formValue.numberPhone,
+            role_id: formValue.role_id,
+            isGoogle: formValue.isGoogle,
+          };
+          let conditions = {
+            method: "POST",
+            headers: {
+              Authorization:
+                "Bearer " + JSON.parse(sessionStorage.getItem("TOKEN")),
+              "Content-Type": "application/json",
+              // 'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: JSON.stringify(newValue),
+          };
+
+          fetch(`http://localhost:8888/user/add-account`, conditions)
+            .then((res) => res.json())
+            .then((data) => {
+              if (data.result.error !== undefined) {
+                setSnakeBar(data.result.error, "error");
+              } else {
+                setSnakeBar("Thêm thành công", "success");
+                getListUser();
+                const modal = document.getElementById("myModal");
+                modal.style.display = "none";
+              }
+            })
+            .catch((error) => console.log(error));
+        }
+      }
+      handleDataForAdd();
+    }
+  }
+  Modal();
+</script>

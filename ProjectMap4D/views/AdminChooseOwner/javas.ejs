@@ -1,0 +1,149 @@
+<script>
+  const tableBody = document.getElementById("table-body");
+  const snakeBar = document.querySelector(".snake__bar");
+  const setSnakeBar = (value, type) => {
+    snakeBar.classList.add(`showSnake__bar__${type}`);
+    snakeBar.querySelector(".snake__value").innerHTML = value;
+    setTimeout(() => {
+      snakeBar.classList.remove(`showSnake__bar__${type}`);
+    }, 1000);
+  };
+  function removeAccents(str) {
+    let newStr = str.toString().split(" ").join("").toLowerCase();
+    return newStr
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/['"]+/g, "")
+      .replace(/đ/g, "d")
+      .replace(/Đ/g, "D");
+  }
+  let listUserDefault = [];
+  let currentUser = "";
+  let methodAddMotel = document.querySelector(
+    'input[type="radio"][name="chooseTypeAddRoom"]:checked'
+  ).value;
+  document.querySelectorAll('input[type="radio"]').forEach((item) =>
+    item.addEventListener("click", (e) => {
+      if (e.target.checked) {
+        methodAddMotel = e.target.value;
+      }
+    })
+  );
+
+  function getListUser() {
+    let options = {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + JSON.parse(sessionStorage.getItem("TOKEN")),
+        "Content-Type": "application/json",
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    };
+    fetch(`http://localhost:8888/user/get-list`, options)
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        const listUser = data.result;
+        listUserDefault = [...listUser];
+        const newValue = listUser.filter((item) => item.role_id == "ID_003");
+        for (let i = 0; i < newValue.length; i++) {
+          const user = newValue[i];
+          if (i === 0) {
+            tableBody.innerHTML = ` <tr style="cursor:pointer" class='list_user'>
+                                      <td>${user.user_id}</td>
+                                      <td>${user.username}</td>
+                                      <td>${user.email}</td>
+                                      <td>${user.numberPhone}</td>
+
+                                    </tr>`;
+          } else {
+            tableBody.innerHTML += ` <tr style="cursor:pointer" class='list_user'>
+                                      <td>${user.user_id}</td>
+                                      <td>${user.username}</td>
+                                      <td>${user.email}</td>
+
+                                      <td>${
+                                        user.numberPhone == "null"
+                                          ? ""
+                                          : user.numberPhone
+                                      }</td>
+
+                                    </tr>`;
+          }
+        }
+        addEventForUser();
+      });
+  }
+  getListUser();
+  function myFunc(user_id) {
+    currentUser = user_id;
+    const user = listUserDefault.find((user) => user.user_id == user_id);
+    document.getElementById("user_result").value = user.username;
+  }
+  function addEventForUser() {
+    const listUser = document.querySelectorAll(".list_user");
+    listUser.forEach((user, index) => {
+      user.addEventListener("click", () => {
+        const user_id = user.querySelector("td").innerHTML;
+        myFunc(user_id);
+      });
+    });
+  }
+  const search_text = document.getElementById("search_text");
+  search_text.addEventListener("change", (e) => {
+    const value = e.target.value;
+    if (value.trim() === "") {
+      setSnakeBar("Vui lòng nhập giá trị", "error");
+    } else {
+      const listUser = listUserDefault.filter((user) =>
+        Object.values(user).some((item) =>
+          removeAccents(item).includes(removeAccents(value))
+        )
+      );
+      if (listUser.length > 0) {
+        listUser.map((user, index) => {
+          if (index === 0) {
+            tableBody.innerHTML = ` <tr style="cursor:pointer" class='list_user'>
+                                      <td>${user.user_id}</td>
+                                      <td>${user.username}</td>
+                                      <td>${user.email}</td>
+
+                                      <td>${user.numberPhone}</td>
+
+                                    </tr>`;
+          } else {
+            tableBody.innerHTML += ` <tr style="cursor:pointer" class='list_user'>
+                                      <td>${user.user_id}</td>
+                                      <td>${user.username}</td>
+                                      <td>${user.email}</td>
+                                      <td>${
+                                        user.numberPhone == "null"
+                                          ? ""
+                                          : user.numberPhone
+                                      }</td>
+
+                                    </tr>`;
+          }
+        });
+        addEventForUser();
+      } else {
+        setSnakeBar("Không có giá trị phù hợp", "error");
+      }
+    }
+  });
+
+  const btnRedirect = document.getElementById("btnRedirect");
+  btnRedirect.addEventListener("click", () => {
+    console.log(methodAddMotel);
+    if (currentUser === "") {
+      setSnakeBar("Vui lòng chọn người dùng", "error");
+    } else {
+      if (methodAddMotel === "addNormal") {
+        location.href = `http://localhost:3000/admin/add-motel-byUI/${currentUser}`;
+      } else {
+        location.href = `http://localhost:3000/admin/add-motel/${currentUser}`;
+      }
+    }
+  });
+</script>

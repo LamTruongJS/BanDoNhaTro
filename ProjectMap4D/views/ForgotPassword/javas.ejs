@@ -1,0 +1,192 @@
+<script>
+  const container = document.querySelector(".container");
+  container.classList.add("sign-up-mode");
+
+  function getNewPassword() {
+    const snackbar = document.querySelector(".snake__bar");
+    function showSnakeBar(value, type) {
+      snackbar.classList.add(`showSnake__bar__${type}`);
+      snackbar.querySelector(".snake__value").innerHTML = value;
+      setTimeout(() => {
+        snackbar.classList.remove(`showSnake__bar__${type}`);
+      }, 2000);
+    }
+    const status = {
+      type: "inputEmail",
+    };
+    const btnConfirm = document.getElementById("btnSignUp");
+    let valueForm = {
+      email: "",
+      password: "",
+      confirmPassword: "",
+      pin: "",
+      confirmPin: "",
+    };
+
+    const email = document.getElementById("email");
+    email.addEventListener("input", (e) => {
+      const value = e.target.value;
+      valueForm = {
+        ...valueForm,
+        email: value,
+      };
+    });
+    document.querySelectorAll("input[type=password]").forEach((item) => {
+      item.addEventListener("input", (e) => {
+        const value = e.target.value;
+        const name = e.target.name;
+        valueForm = {
+          ...valueForm,
+          [name]: value,
+        };
+      });
+    });
+
+    const pin = document.getElementById("confirmPin");
+    pin.addEventListener("input", (e) => {
+      const value = e.target.value;
+      valueForm = {
+        ...valueForm,
+        confirmPin: value,
+      };
+    });
+
+    btnConfirm.addEventListener("click", () => {
+      switch (status.type) {
+        case "inputEmail": {
+          inputEmailFC();
+          break;
+        }
+        case "confirmPin": {
+          confirmPinFC();
+          break;
+        }
+        case "inputPassword": {
+          inputPasswordFC();
+          break;
+        }
+        default:
+          break;
+      }
+    });
+
+    function inputEmailFC() {
+      if (status.type !== "inputEmail") return;
+      if (valueForm.email.trim() === "") {
+        showSnakeBar("Email không được bỏ trống", "error");
+      } else {
+        let options = {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            // 'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: JSON.stringify({ email: valueForm.email }),
+        };
+        fetch("http://localhost:8888/user/get-email", options)
+          .then((response) => {
+            return response.json();
+          })
+          .then((data) => {
+            if (data.result.error !== undefined) {
+              showSnakeBar(data.result.error, "error");
+            } else {
+              document.getElementById("email").setAttribute("disabled", "true");
+              document.getElementById("pinContainer").classList.remove("none");
+              sendMail({ email: valueForm.email });
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    }
+    function sendMail(data) {
+      let options = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          // 'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: JSON.stringify(data),
+      };
+      fetch("http://localhost:8888/sendmail", options)
+        .then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          valueForm.pin = data.result;
+          status.type = "confirmPin";
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+
+    function confirmPinFC() {
+      console.log(valueForm);
+      if (status.type !== "confirmPin") return;
+      if (valueForm.confirmPin.trim() === "") {
+        showSnakeBar("Mã xác nhận không được bỏ trống", "error");
+      } else {
+        if (valueForm.pin.toString() != valueForm.confirmPin.toString()) {
+          showSnakeBar("Mã xác nhận không chính xác", "error");
+        } else {
+          showSnakeBar("Mã xác nhận chính xác", "success");
+          document
+            .getElementById("container_password")
+            .classList.remove("none");
+          document.getElementById("pinContainer").classList.add("none");
+          status.type = "inputPassword";
+        }
+      }
+    }
+
+    function inputPasswordFC() {
+      if (status.type !== "inputPassword") return;
+      if (valueForm.password.toString().trim() === "") {
+        showSnakeBar("Mật khẩu không được bỏ trống", "error");
+      } else {
+        if (valueForm.confirmPassword.toString().trim() === "") {
+          showSnakeBar("Vui lòng xác nhận mật khẩu", "error");
+        } else {
+          if (
+            valueForm.password.toString() !=
+            valueForm.confirmPassword.toString()
+          ) {
+            showSnakeBar("Mật khẩu không trùng khớp", "error");
+          } else {
+            changePassword({
+              email: valueForm.email,
+              password: valueForm.password,
+            });
+          }
+        }
+      }
+      function changePassword(data) {
+        let options = {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            // 'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: JSON.stringify(data),
+        };
+        fetch("http://localhost:8888/user/forgot-password", options)
+          .then((response) => {
+            return response.json();
+          })
+          .then((data) => {
+            showSnakeBar(data.result.success, "success");
+            setTimeout(() => {
+              location.href = "http://localhost:3000/login";
+            }, 1500);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    }
+  }
+  getNewPassword();
+</script>

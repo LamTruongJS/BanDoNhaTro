@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Thông Tin Tài Khoản</title>
+    <link rel="icon" type="image/x-icon" href="/images/logoMap.png" />
+  </head>
+  <%- include('./style'); %>
+  <body>
+    <div id="accountSetting">
+      <div class="header">
+        <a class="icon__back" href="http://localhost:3000">
+          <img src="/images/icon__back.png" alt="back" class="img__back" />
+        </a>
+        <div class="header__title">
+          <img src="/images/logoMap.png" alt="title" />
+        </div>
+      </div>
+      <div id="showNotiferGoogle" class="">
+        Lưu ý: Với tài khoản Google bạn chỉ có thể thay đổi số điện thoại
+      </div>
+      <div class="row body__container">
+        <div class="snake__bar">
+          <div class="snake__value">Email trùng lặp</div>
+        </div>
+        <form class="page" id="form">
+          <div class="cf-title-12">
+            <h3>Thông tin tài khoản</h3>
+          </div>
+
+          <label class="field field_v2">
+            <input
+              class="field__input layout__disabled"
+              type="text"
+              placeholder="e.g. Stanislav"
+              id="username"
+              name="username"
+              readonly
+              required
+            />
+            <span class="field__label-wrap">
+              <span class="field__label">Tên Đăng Nhập</span>
+            </span>
+          </label>
+          <label class="field field_v2">
+            <input
+              class="field__input layout__disabled"
+              type="email"
+              placeholder="e.g. melnik909@ya.ru"
+              id="email"
+              name="email"
+              readonly
+              required
+            />
+            <span class="field__label-wrap">
+              <span class="field__label">E-mail</span>
+            </span>
+          </label>
+          <label class="field field_v2">
+            <input
+              class="field__input layout__disabled"
+              type="password"
+              placeholder="e.g. ************"
+              id="password"
+              name="password"
+              readonly
+              required
+            />
+            <span class="field__label-wrap">
+              <span class="field__label">Mật Khẩu</span>
+            </span>
+          </label>
+          <label class="field field_v2">
+            <input
+              class="field__input layout__disabled"
+              type="tel"
+              placeholder="e.g. 00905172802"
+              id="numberPhone"
+              name="numberPhone"
+              readonly
+              required
+            />
+            <span class="field__label-wrap">
+              <span class="field__label">Số Điện Thoại</span>
+            </span>
+          </label>
+
+          <label class="field">
+            <div class="layout__button" id="layout__btn">
+              <button type="button" class="btn__edit" id="btn__edit">
+                Chỉnh sửa
+              </button>
+              <button
+                type="button"
+                class="btn__save btn__none"
+                id="btn__cancel"
+              >
+                Hủy
+              </button>
+              <button type="button" class="btn__save btn__none" id="btn__save">
+                Lưu thay đổi
+              </button>
+            </div>
+          </label>
+        </form>
+      </div>
+    </div>
+  </body>
+  <%- include('./javas') %>
+</html>
